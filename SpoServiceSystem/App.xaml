@@ -4,6 +4,13 @@
              xmlns:local="clr-namespace:SpoServiceSystem"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <ResourceDictionary Source="pack://application:,,,/ResoursesApp/BrushesRes.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/ResoursesApp/StylesRes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

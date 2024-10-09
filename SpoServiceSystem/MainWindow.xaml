@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoServiceSystem"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Главное окно программы" Height="450" Width="800">
     <Window.CommandBindings>
 
         <CommandBinding  Command = "Zoom"   CanExecute="CommandBinding_CanExecute"         Executed="CommandBinding_Executed" />
@@ -34,7 +34,7 @@
                         <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                     </MenuItem.CommandBindings>
                   </MenuItem>
-                    <MenuItem Header="Виды обучения" Command="Zoom"  CommandParameter="BO">
+                    <MenuItem Header="Квалификация" Command="Zoom"  CommandParameter="KF">
                         <MenuItem.Icon>
                             <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
                         </MenuItem.Icon>
@@ -43,7 +43,65 @@
                         </MenuItem.CommandBindings>
                     </MenuItem>
 
+                    <MenuItem Header="Специальности" Command="Zoom"  CommandParameter="SP">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Преподаватели" Command="Zoom"  CommandParameter="PR">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+
+                    <MenuItem Header="Учебные группы" Command="Zoom"  CommandParameter="GR">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Предметы обучения" Command="Zoom"  CommandParameter="PO">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Шаблон учебного плана" Command="Zoom"  CommandParameter="SHUP">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Учебные планы">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                    </MenuItem.Icon>
+                    <MenuItem Header="Новый учебный план" Command="Zoom"  CommandParameter="NUPL">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                </MenuItem>
+
             </Menu>
         </DockPanel>
     </Grid>
