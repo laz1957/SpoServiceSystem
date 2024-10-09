@@ -7,11 +7,13 @@
          xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
         mc:Ignorable="d"
+        x:Name="PlanWindow"
         Title="Учебный план" Height="550" Width="1000">
     <Window.Resources>
         <data:Prepmets x:Key="predmets"></data:Prepmets>
         <data:Kurses x:Key="kurses"/>
         <class:IntegerConverter x:Key="integerConverter"/>
+        <class:RowStateToBrushConverter x:Key="colorconverter"/>
     </Window.Resources>
 
     <Grid x:Name="TopGrid">
@@ -48,17 +50,23 @@
                 <DataGrid x:Name="datagrid" Width="1700" 
                       ItemsSource="{Binding Source={StaticResource predmets}}"
                       AutoGenerateColumns="False"
+                          CanUserAddRows="False"
                       CellEditEnding="datagrid_CellEditEnding"  
                       SelectedCellsChanged="dataGrid_SelectedCellsChanged"
+                       CurrentCellChanged="datagrid_CurrentCellChanged" 
                       >
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="VerticalContentAlignment" Value="Bottom"/>
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
-
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}}"/>
+                        </Style>
+                    </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="Col1" Width="60" Header="№ п\п" Binding="{Binding Path=Id}">
+                        <DataGridTextColumn x:Name="Col1" Width="60" Header="№ п\п" Binding="{Binding Path=Number}">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -77,7 +85,8 @@
                                             ItemsSource="{Binding Source={StaticResource kurses}}"
                                             DisplayMemberPath="Name"
                                             SelectedValuePath="Id"
-                                            SelectedValueBinding="{Binding Path=id_sp}"
+                                            SelectedValueBinding="{Binding Path=id_predmet}"
+                                      
                                             >
                             <DataGridComboBoxColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -435,7 +444,8 @@
 
                     </DataGrid.Columns>
                 </DataGrid>
-                <Grid Background="LightBlue">
+                <Grid x:Name="grid_futter" Background="LightBlue" DataContext="{Binding ElementName=PlanWindow,Path=.}"
+                      >
                     <Grid.ColumnDefinitions>
 
                         <ColumnDefinition Width="{Binding ElementName=Col1,Path=ActualWidth}"/>
@@ -468,32 +478,32 @@
                     <TextBlock Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
                     <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontWeight="Bold" Margin="20,0,0,0">Итого</TextBlock>
 
-                    <TextBlock Grid.Column="3" HorizontalAlignment="Center">100</TextBlock>
-                    <TextBlock Grid.Column="4" HorizontalAlignment="Center">100</TextBlock>
-                    <TextBlock Grid.Column="5" HorizontalAlignment="Center">100</TextBlock>
-                    <TextBlock Grid.Column="6" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="7" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="8" HorizontalAlignment="Center">1</TextBlock>
-                    <TextBlock Grid.Column="9" HorizontalAlignment="Center">2</TextBlock>
+                    <TextBlock Grid.Column="3" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem1,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="4" HorizontalAlignment="Center" Text="{Binding ElementName=PlanWindow, Path=ItogoItem2,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="5" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem3,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="6" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem4,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="7" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem5,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="8" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem6,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="9" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem7,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="10" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="11" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="12" HorizontalAlignment="Center">3</TextBlock>
+                    <TextBlock Grid.Column="10" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem8,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="11" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem9,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="12" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem10,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="13" HorizontalAlignment="Center">1</TextBlock>
-                    <TextBlock Grid.Column="14" HorizontalAlignment="Center">2</TextBlock>
-                    <TextBlock Grid.Column="15" HorizontalAlignment="Center">3</TextBlock>
-                    <TextBlock Grid.Column="16" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="17" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="18" HorizontalAlignment="Center">1</TextBlock>
-                    <TextBlock Grid.Column="19" HorizontalAlignment="Center">2</TextBlock>
+                    <TextBlock Grid.Column="13" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem11,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="14" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem12,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="15" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem13,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="16" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem14,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="17" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem15,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="18" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem16,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="19" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem17,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="20" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="21" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="22" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="23" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="24" HorizontalAlignment="Center">12</TextBlock>
-                    <TextBlock Grid.Column="25" HorizontalAlignment="Center">12</TextBlock>
+                    <TextBlock Grid.Column="20" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem18,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="21" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem19,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="22" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem20,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="23" HorizontalAlignment="Center" Text="{Binding Path=ItogoItem21,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="24" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="25" HorizontalAlignment="Center"/>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

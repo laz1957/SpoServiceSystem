@@ -25,6 +25,7 @@
                      MethodName="getSourceComboBox" >
             <ObjectDataProvider.MethodParameters>
                 <system:String>kvalifications</system:String>
+               
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>

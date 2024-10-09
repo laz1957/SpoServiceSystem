@@ -43,11 +43,15 @@ namespace SpoServiceSystem.Classes
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            int d = (int)value;
+            int d;
+            if (value.GetType().ToString()=="System.DBNull") 
+                 d=0;
+            else 
+                d = (int)value;
             if (double.IsNaN(d))
                 return string.Empty;
             if(d==0) return string.Empty;
-
+            
             return value;
         }
 

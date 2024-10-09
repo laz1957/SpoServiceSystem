@@ -22,3 +22,14 @@
   `Item17` INT NULL,
   `Item18` INT NULL,
   PRIMARY KEY (`id_up`, `Item10`));
+
+
+
+
+  cmd = new MySqlCommand("SELECT * FROM mytable WHERE id=@id AND name=@name", conn);
+
+cmd.Parameters.Add("@id", MySqlDbType.VarChar, 15);
+cmd.Parameters.Add("@name", MySqlDbType.VarChar, 15);
+
+da.SelectCommand = cmd;
+

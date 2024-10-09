@@ -17,6 +17,7 @@ namespace SpoServiceSystem.DataModels
         string MySqlPassword = "ski150357";
         string MySqlUserName = "root";
         string TableName;
+        public string BazaSoft_Parameter {  get; set; }
         public string MySqlConnectionString { 
             get {
                 return string.Format(shablonStrConnection, MySqlServerName, MySqlDataBaze, MySqlUserName, MySqlPassword);
@@ -430,7 +431,51 @@ namespace SpoServiceSystem.DataModels
             return n;
         }
 
+        #region --------------- Учебный план ------------
+          
+        public DataView GetUchPlanDataView(int _idgroup)
+        {
+            
+            DataTable? dt = new DataTable();
+            
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    conn.Open();
+                    MySqlCommand command = new MySqlCommand("SELECT * FROM uch_plan_groups WHERE id_group=@id", conn); ;
+                    command.Parameters.Add("@id", MySqlDbType.VarChar, _idgroup);
+                    MySqlDataAdapter adapter = new MySqlDataAdapter();
+                    adapter.SelectCommand = command;
+                    adapter.Fill(dt);
+                    conn.Close();
+                    dt.Columns.Add("Number", typeof(Int32));
+                    dt.Columns.Add("Index", typeof(string));
+                    dt.Columns.Add("Vsego1", typeof(Int32));
+                    dt.Columns.Add("Vsego2", typeof(Int32));
+                    dt.Columns.Add("Itogo", typeof(Int32));
+                    dt.Columns["Vsego1"].Expression = "Item2+Item4";
+                    dt.Columns["Vsego2"].Expression = "Item6+Item7+Item8+Item9+Item10+Item11+Item12+Item13+Item14+Item15";
+                    dt.Columns["Itogo"].Expression = "Vsego2+Item16+Item17+Item18";
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+                
+
+
+
+            }
+            return dt.DefaultView;
+        }
+
+        #endregion------------------------------------
+
+
+
     }
 
-   
+
 }
