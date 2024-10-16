@@ -26,7 +26,7 @@
                ObjectType="{x:Type data:BazaSoft}"
                MethodName="getSourceComboBox" >
             <ObjectDataProvider.MethodParameters>
-                <system:String>specialnost</system:String>
+                <system:String>specialnost_view</system:String>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
@@ -73,7 +73,7 @@
                 <DataGridTextColumn Width="*"  Header="Название Предмета" Binding="{Binding Path=name_pr}"/>
                 <DataGridComboBoxColumn Header="Cпециальность" Width="0.3*"
                                         ItemsSource="{Binding Source={StaticResource spec_table}}"
-                                        DisplayMemberPath="name_sp"
+                                        DisplayMemberPath="fullname"
                                         SelectedValuePath="id_sp"
                                         SelectedValueBinding="{Binding Path=id_sp}" 
                                         >

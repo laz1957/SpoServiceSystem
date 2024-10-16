@@ -11,7 +11,7 @@
         <CommandBinding  Command = "Zoom"   CanExecute="CommandBinding_CanExecute"         Executed="CommandBinding_Executed" />
        
     </Window.CommandBindings>
-    <Grid>
+    <Grid x:Name="mainWindowGrid">
         <Grid.Background>
             <ImageBrush ImageSource="pack://application:,,,/ImageLib;component/Resources/c2347652f225ce2ee19ccec86b963766.jpg" />
         </Grid.Background>
@@ -88,6 +88,18 @@
                         </MenuItem.CommandBindings>
                     </MenuItem>
                 </MenuItem>
+                <MenuItem Header="Учебные группы" Command="Zoom"  CommandParameter="UGR">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                    </MenuItem.Icon>
+         
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+ 
+
+
                 <MenuItem Header="Учебные планы">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />

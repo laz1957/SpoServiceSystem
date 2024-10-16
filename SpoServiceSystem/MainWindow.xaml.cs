@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using SpoServiceSystem.Controls;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -29,12 +30,19 @@ namespace SpoServiceSystem
 
         private void CommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            
+
+            object fe = mainWindowGrid.FindName("allGroupsViewControl");
+            if (fe != null)
+            {
+                mainWindowGrid.Children.Remove(fe as UIElement);
+                mainWindowGrid.UnregisterName("allGroupsViewControl");
+            }
             switch (e.Parameter.ToString())
             {
                 case "KF":
                       SpoServiceSystem.Windows.KvalificationsWindow win = new SpoServiceSystem.Windows.KvalificationsWindow();
                       win.Show();
+                   
                     break;
                 case "UO":
                     SpoServiceSystem.Windows.UchOtdWindow winUO = new Windows.UchOtdWindow();
@@ -63,6 +71,15 @@ namespace SpoServiceSystem
                 case "NUPL":
                     SpoServiceSystem.Windows.UchPlanWindow winNUPL = new SpoServiceSystem.Windows.UchPlanWindow();
                     winNUPL.Show();
+                    break;
+                case "UGR":
+                    SpoServiceSystem.Controls.AllGroupsUserControl aguc = new Controls.AllGroupsUserControl();
+                    aguc.Name="allGroupsViewControl";
+                    // =this.Content = aguc;
+                    //mainWindowGrid.Background=null;
+                    aguc.SetValue(Grid.RowProperty, 1);
+                    mainWindowGrid.Children.Add(aguc);
+                    mainWindowGrid.RegisterName("allGroupsViewControl", aguc);
                     break;
             }
 

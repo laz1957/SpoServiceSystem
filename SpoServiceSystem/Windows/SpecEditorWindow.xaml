@@ -67,7 +67,8 @@
             </DataGrid.RowStyle>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Код специальности" Binding="{Binding Path=cod_sp}" Width="120" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Код специальности" Binding="{Binding Path=cod_sp}" Width="120" />
+
                 <DataGridTextColumn Width="*"  Header="Название специальности" Binding="{Binding Path=name_sp}"/>
                 <DataGridComboBoxColumn Header="Квалификация" Width="0.4*"
                                         ItemsSource="{Binding Source={StaticResource kf_table}}"

@@ -1,5 +1,8 @@
-﻿using SpoServiceSystem.DataModels;
+﻿using MySqlX.XDevAPI.Common;
+using SpoServiceSystem.Classes;
+using SpoServiceSystem.DataModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -10,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -24,6 +28,7 @@ namespace SpoServiceSystem.Windows
     /// </summary>
     public partial class UchPlanWindow : Window
     {
+        #region Свойства зависимости
         public static readonly DependencyProperty ItogoItem1Property;
         public static readonly DependencyProperty ItogoItem2Property;
         public static readonly DependencyProperty ItogoItem3Property;
@@ -174,6 +179,7 @@ namespace SpoServiceSystem.Windows
             get { return (int)GetValue(ItogoItem21Property); }
             set { SetValue(ItogoItem21Property, value); }
         }
+        #endregion
         public UchPlanWindow()
         {
             InitializeComponent();
@@ -191,7 +197,7 @@ namespace SpoServiceSystem.Windows
 
         private void Drw_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            //  MessageBox.Show(e.PropertyName);
+            
             RaschetItogov();
         }
 
@@ -215,6 +221,13 @@ namespace SpoServiceSystem.Windows
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
+
+            // DataRowView item = datagrid.Items[1] as DataRowView;
+
+            
+           
+
+
             DataTable dt = (datagrid.ItemsSource as DataView).Table;
             DataTable dtCange = dt.GetChanges();
             if (dtCange != null)
@@ -243,7 +256,7 @@ namespace SpoServiceSystem.Windows
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-          
+
 
 
             DataTable dt = (datagrid.ItemsSource as DataView).Table;
@@ -260,26 +273,26 @@ namespace SpoServiceSystem.Windows
 
         private void dataGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
-            
+
             if ((sender as DataGrid).SelectedItem != null)
                 CollectionViewSource.GetDefaultView(datagrid.ItemsSource).Refresh();
         }
 
         private void datagrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-             
+
             if (e.EditAction==DataGridEditAction.Commit)
             {
 
-               
-                
-                
+
+
+
             }
         }
 
         private void datagrid_CurrentCellChanged(object sender, EventArgs e)
         {
-            
+
         }
         void RaschetItogov()
         {
@@ -334,6 +347,46 @@ namespace SpoServiceSystem.Windows
             }
         }
 
-        
+      
+        private void ImportExcelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            
+             
+            /*
+               BackgroundWorker worker = new BackgroundWorker();
+             worker.WorkerReportsProgress = true;
+             worker.DoWork += worker_DoWork;
+             worker.ProgressChanged += worker_ProgressChanged;
+             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+             worker.RunWorkerAsync(10000);
+              */
+            MessageWindow mw = new MessageWindow("Выполняется импорт данных! Подождите");
+           // mw.MessageText="Выполняется импорт данных! Подождите";
+            mw.Show();
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork+=Worker_DoWork;
+            worker.RunWorkerCompleted+=Worker_RunWorkerCompleted;
+            worker.RunWorkerAsync(mw);
+            ExcelManager em = new ExcelManager(this);
+            em.Init();
+            em.GreateExcelDocument();
+            em.Close();
+            mw.Close();
+
+        }
+
+        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+           // (e.Result as MessageWindow).Close();
+
+
+        }
+
+        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            System.Threading.Thread.Sleep(5000);
+            e.Result = e.Argument;
+        }
     }
 }
+
