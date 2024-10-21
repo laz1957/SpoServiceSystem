@@ -12,6 +12,7 @@
         Title="Учебный план" Height="550" Width="1000">
     <Window.Resources>
         <data:Prepmets x:Key="predmets"></data:Prepmets>
+        <data:ListPrepod x:Key="listPrepod"/>
         <data:Kurses x:Key="kurses"/>
         <class:IntegerConverter x:Key="integerConverter"/>
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
@@ -19,24 +20,60 @@
 
     <Grid x:Name="TopGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="36"/>
+            <RowDefinition Height="42"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="36"/>
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="2"  HorizontalAlignment="Right">
+            <CheckBox x:Name="ViewExcel" Margin="0,0,10,0" IsChecked="False" VerticalAlignment="Center" >Открыть Excel</CheckBox>
             <Button  x:Name="ImportExcelBtn" Width="100" Margin="0,0,50,0" Click="ImportExcelBtn_Click" >Импорт в Excel</Button>
+
+            <Button  x:Name="settingUpBtn" Width="160" Click="settingUpBtn_Click">Установить учебный план</Button>
+            <Button  x:Name="deleteUpBtn" Width="160" Click="deleteUpBtn_Click">Удалить учебный план</Button>
             <Button  x:Name="addBtn" Width="100" Click="addBtn_Click">Add</Button>
             <Button  x:Name="saveBtn" Width="100" Click="saveBtn_Click">Save</Button>
             <Button  x:Name="delBtn" Width="100" Click="delBtn_Click">Delete</Button>
             <Button  x:Name="exitBtn" Width="100" Click="exitBtn_Click">Выход</Button>
         </DockPanel>
-        <DockPanel Grid.Row="0" Background="LightBlue">
-            <TextBlock Text="Справочник Специальности" 
+        <DockPanel Grid.Row="0" Background="LightBlue"  LastChildFill="False" >
+            <TextBlock Text="Учебный план" DockPanel.Dock="Left" Margin="20,0,0,0"
            Foreground="Maroon" 
            FontWeight="Bold"
            FontSize="24"
            VerticalAlignment="Center"
-           HorizontalAlignment="Center"/>
+           />
+          
+                <TextBlock Text="Группа:" 
+                    DockPanel.Dock="Left" Margin="10,0,0,0"
+                    Foreground="Maroon" 
+                    FontWeight="Bold"
+                    FontSize="24"
+                    VerticalAlignment="Center"
+                    />      
+
+                <TextBlock Text="{Binding Path=CurrentGroup.NameGroup}" 
+                    DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:UchPlanWindow}}}"
+                    Foreground="Maroon" 
+                    FontWeight="Bold"
+                    FontSize="24"
+                    DockPanel.Dock="Left" Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    />
+
+            <TextBlock   DockPanel.Dock="Right" Margin="0,0,10,0"
+                 Text="{Binding RelativeSource={RelativeSource FindAncestor,
+                        AncestorType={x:Type local:UchPlanWindow} },
+                        Path=uchPlanGroup.StringStatus,
+                        UpdateSourceTrigger=PropertyChanged}"
+                VerticalAlignment="Center"
+                 Foreground="Maroon" 
+                FontWeight="Bold"
+                         FontSize="14"
+            />
+            <TextBlock Margin="0,0,5,0" DockPanel.Dock="Right" VerticalAlignment="Center" Text="Статус плана :"/>
+
+           
+        
         </DockPanel>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <ScrollViewer.Style>
@@ -56,6 +93,7 @@
                       CellEditEnding="datagrid_CellEditEnding"  
                       SelectedCellsChanged="dataGrid_SelectedCellsChanged"
                        CurrentCellChanged="datagrid_CurrentCellChanged" 
+                         
                       >
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
@@ -68,14 +106,14 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="Col1" Width="60" Header="№ п\п" Binding="{Binding Path=Number}">
+                        <DataGridTextColumn x:Name="Col1" Width="60" Header="№ п\п" Binding="{Binding Path=Number}" IsReadOnly="True">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn x:Name="Col2" Width="0.3*" Header="Индекс" Binding="{Binding Path=Index}">
+                        <DataGridTextColumn x:Name="Col2" Width="0.3*" Header="Индекс" Binding="{Binding Path=index_pr}">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -83,12 +121,24 @@
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
                         </DataGridTextColumn>
+                        <!--
+                        <DataGridTextColumn x:Name="Col31" Width="*" Header="Название учеюного предмета,курса,дисциплины (модуля)" 
+                                            Binding="{Binding Path=name_pr}">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                        </DataGridTextColumn>
+                        -->
+                        
                         <DataGridComboBoxColumn x:Name="Col3" Width="*" Header="Название учеюного предмета,курса,дисциплины (модуля)"
-                                            ItemsSource="{Binding Source={StaticResource kurses}}"
-                                            DisplayMemberPath="Name"
-                                            SelectedValuePath="Id"
+                                            ItemsSource="{Binding Source={StaticResource predmets}}"
+                                            DisplayMemberPath="Name_pr"
+                                            SelectedValuePath="Id_pr"
                                             SelectedValueBinding="{Binding Path=id_predmet}"
-                                      
+                                            
                                             >
                             <DataGridComboBoxColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -96,7 +146,15 @@
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridComboBoxColumn.HeaderStyle>
+
+                            <DataGridComboBoxColumn.EditingElementStyle>
+                                <Style TargetType="{x:Type ComboBox}">
+                                    <EventSetter Event="SelectionChanged" Handler="SomeSelectionChanged" />
+                                </Style>
+                            </DataGridComboBoxColumn.EditingElementStyle>
+
                         </DataGridComboBoxColumn>
+                        
                         <class:DataGridNumericColumn x:Name="Col4" Width="30" Binding="{Binding Path=Item1,Converter={StaticResource integerConverter}}">
 
                             <class:DataGridNumericColumn.HeaderTemplate   >
@@ -434,15 +492,28 @@
                                 </DataTemplate>
                             </class:DataGridNumericColumn.HeaderTemplate>
                         </class:DataGridNumericColumn>
-                        <DataGridComboBoxColumn x:Name="Col25" Width="0.5*" Header="ФИО преподавателя">
+                 
+                        <DataGridComboBoxColumn x:Name="Col25" Width="0.5*" Header="ФИО преподавателя"
+                            ItemsSource="{Binding Source={StaticResource listPrepod}}"
+                            DisplayMemberPath="Fio"
+                            SelectedValuePath="Id"
+                            SelectedValueBinding="{Binding Path=id_prepod}" 
+                                               >
                             <DataGridComboBoxColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridComboBoxColumn.HeaderStyle>
-
+                            <DataGridComboBoxColumn.EditingElementStyle>
+                                <Style TargetType="ComboBox">
+                                    <Setter Property="IsEditable" Value="True"/>
+                                </Style>
+                            </DataGridComboBoxColumn.EditingElementStyle>
                         </DataGridComboBoxColumn>
+                     
+               
+
 
                     </DataGrid.Columns>
                 </DataGrid>

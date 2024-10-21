@@ -50,6 +50,7 @@ namespace SpoServiceSystem.Windows
         public static readonly DependencyProperty ItogoItem19Property;
         public static readonly DependencyProperty ItogoItem20Property;
         public static readonly DependencyProperty ItogoItem21Property;
+        public static readonly DependencyProperty uchPlanGroupProperty;
         static UchPlanWindow()
         {
             ItogoItem1Property = DependencyProperty.Register("ItogoItem1", typeof(int), typeof(UchPlanWindow));
@@ -73,6 +74,12 @@ namespace SpoServiceSystem.Windows
             ItogoItem19Property = DependencyProperty.Register("ItogoItem19", typeof(int), typeof(UchPlanWindow));
             ItogoItem20Property = DependencyProperty.Register("ItogoItem20", typeof(int), typeof(UchPlanWindow));
             ItogoItem21Property = DependencyProperty.Register("ItogoItem21", typeof(int), typeof(UchPlanWindow));
+            uchPlanGroupProperty = DependencyProperty.Register("uchPlanGroup", typeof(UchPlanGroup), typeof(UchPlanWindow));
+        }
+        public UchPlanGroup uchPlanGroup
+        {
+            get { return (UchPlanGroup)GetValue(uchPlanGroupProperty); }
+            set { SetValue(uchPlanGroupProperty, value); }
         }
         public int ItogoItem1
         {
@@ -180,15 +187,62 @@ namespace SpoServiceSystem.Windows
             set { SetValue(ItogoItem21Property, value); }
         }
         #endregion
+        public Group CurrentGroup { get; set; }
+        //public UchPlanGroup uchPlanGroup { get; set; }
+        BazaSoft bs;
+        MessageWindow message_window;
         public UchPlanWindow()
         {
             InitializeComponent();
-
-            BazaSoft bs = new BazaSoft();
-            datagrid.ItemsSource = bs.GetUchPlanDataView(1);
+            bs = new BazaSoft();
+            
+        }
+        public UchPlanWindow(Group group) :this()
+        {
+            // Конструктор для новаго плана
+            CurrentGroup = group;
+            uchPlanGroup = new UchPlanGroup(group);
+            uchPlanGroup.status = UchPlanStatus.New;
+            uchPlanGroup.StringStatus = "Новый";
+            // datagrid.ItemsSource = bs.GenerateUchPlanDataView(group.Id);
+            datagrid.ItemsSource = uchPlanGroup.GetNewUchPlan();
             datagrid.LoadingRow+=Datagrid_LoadingRow;
+
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
+            view.Filter = SpecialnosrFilter;
+            settingUpBtn.Visibility = Visibility.Visible;
+            deleteUpBtn.Visibility= Visibility.Collapsed;
+
+        }
+        public UchPlanWindow(Group group,int var) : this()
+        {
+            // Конструктор для существующего учебного плана
+            CurrentGroup = group;
+            uchPlanGroup = new UchPlanGroup(group);
+            //uchPlanGroup.status = UchPlanStatus.New;
+            // datagrid.ItemsSource = bs.GenerateUchPlanDataView(group.Id);
+            datagrid.ItemsSource = uchPlanGroup.GetUchPlan();
+            datagrid.LoadingRow+=Datagrid_LoadingRow;
+            datagrid.Loaded+=Datagrid_Loaded;
+
+             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
+            view.Filter = SpecialnosrFilter;
+            settingUpBtn.Visibility = Visibility.Collapsed;
         }
 
+        private void Datagrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            RaschetItogov();
+        }
+
+        bool SpecialnosrFilter(object item)
+        {
+            if(CurrentGroup==null) return true;
+            Predmet pr = item as Predmet;
+            if (pr==null) return true;
+            else
+                return (pr.Id_sp==CurrentGroup.Id_sp) && (pr.Kurs==CurrentGroup.Kurs);
+        }
         private void Datagrid_LoadingRow(object? sender, DataGridRowEventArgs e)
         {
             DataRowView drw = (e.Row.Item as DataRowView);
@@ -206,7 +260,7 @@ namespace SpoServiceSystem.Windows
             int ncount = (datagrid.ItemsSource as DataView).Table.Rows.Count+1;
             DataRow dr = (datagrid.ItemsSource as DataView).Table.NewRow();
             dr["Number"]=ncount;
-            dr["Index"]="Новая";
+            dr["index_pr"]="Новая";
             dr["Item1"]=0; dr["Item3"]=0;
             dr["Item2"]=0; dr["Item4"]=0;
             dr["Item5"]=0; dr["Item6"]=0;
@@ -217,28 +271,49 @@ namespace SpoServiceSystem.Windows
             dr["Item15"]=0; dr["Item16"]=0;
             dr["Item17"]=0; dr["Item18"]=0;
             (datagrid.ItemsSource as DataView).Table.Rows.Add(dr);
+            uchPlanGroup.StringStatus = "Добавлены новые данные";
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
         {
+            message_window = new MessageWindow();
+            message_window.MessageText = "Выполняется сохранение информации!";
+            message_window.Show();
+           
+            DataTable dt = (datagrid.ItemsSource as DataView).Table;
+           
+            BackgroundWorker bw002 = new BackgroundWorker();
+            bw002.DoWork+=Bw002_DoWork;
+            bw002.RunWorkerCompleted+=Bw002_RunWorkerCompleted;
+            bw002.RunWorkerAsync(dt);
 
-            // DataRowView item = datagrid.Items[1] as DataRowView;
+
 
             
-           
+        }
 
+        private void Bw002_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            message_window.MessageText = "Операция выполнена!!!";
+            message_window.OkBtn.Visibility = Visibility.Visible;
+            uchPlanGroup.StringStatus = "Норма";
+            (datagrid.ItemsSource as DataView).Table.AcceptChanges();
+        }
 
-            DataTable dt = (datagrid.ItemsSource as DataView).Table;
-            DataTable dtCange = dt.GetChanges();
-            if (dtCange != null)
+        private void Bw002_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            DataTable dt = e.Argument as DataTable;
+            if (dt != null)
             {
-
-                //int n = (TopGrid.DataContext as DataModels.BazaSoft).SaveSpecialnost(dt);
-                // if (n > 0)
-                //  {
-                dt.AcceptChanges();
-                // }
+                int n = bs.SaveUchPlan(dt);
+                if (n > 0)
+                {
+                  //  dt.AcceptChanges();
+                   
+                }
             }
+
+            System.Threading.Thread.Sleep(1000);
         }
 
         private void delBtn_Click(object sender, RoutedEventArgs e)
@@ -256,9 +331,6 @@ namespace SpoServiceSystem.Windows
 
         private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
-
-
-
             DataTable dt = (datagrid.ItemsSource as DataView).Table;
             DataTable dtCange = dt.GetChanges();
             if (dtCange != null)
@@ -276,6 +348,7 @@ namespace SpoServiceSystem.Windows
 
             if ((sender as DataGrid).SelectedItem != null)
                 CollectionViewSource.GetDefaultView(datagrid.ItemsSource).Refresh();
+            
         }
 
         private void datagrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
@@ -289,13 +362,21 @@ namespace SpoServiceSystem.Windows
 
             }
         }
+        private void SomeSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var comboBox = sender as ComboBox;
+            var item = comboBox.SelectedItem as Predmet;
+            DataRowView selectedItem = this.datagrid.CurrentItem as DataRowView;
+            selectedItem.Row["index_pr"]=item.Index_pr;
 
+        }
         private void datagrid_CurrentCellChanged(object sender, EventArgs e)
         {
 
         }
         void RaschetItogov()
         {
+            uchPlanGroup.StringStatus = "Изменен";
             ItogoItem1=0;
             ItogoItem2=0;
             ItogoItem3=0;
@@ -320,72 +401,103 @@ namespace SpoServiceSystem.Windows
             ItogoItem21=0;
             foreach (DataRow r in (datagrid.ItemsSource as DataView).Table.Rows)
             {
-                ItogoItem1+=r.Field<int>("Item1");
-                ItogoItem2+=r.Field<int>("Item2");
-                ItogoItem3+=r.Field<int>("Item3");
-                ItogoItem4+=r.Field<int>("Item4");
-                ItogoItem5+=r.Field<int>("Item5");
-                ItogoItem6+=r.Field<int>("Vsego1");
-                ItogoItem7+=r.Field<int>("Item6");
-                ItogoItem8+=r.Field<int>("Item7");
-                ItogoItem9+=r.Field<int>("Item8");
-                ItogoItem10+=r.Field<int>("Item9");
-                ItogoItem11+=r.Field<int>("Item10");
-                ItogoItem12+=r.Field<int>("Item11");
-                ItogoItem13+=r.Field<int>("Item12");
-                ItogoItem14+=r.Field<int>("Item13");
-                ItogoItem15+=r.Field<int>("Item14");
-                ItogoItem16+=r.Field<int>("Item15");
-                ItogoItem17+=r.Field<int>("Vsego2");
-                ItogoItem18+=r.Field<int>("Item16");
-                ItogoItem19+=r.Field<int>("Item17");
-                ItogoItem20+=r.Field<int>("Item18");
-                ItogoItem21+=r.Field<int>("Itogo");
+                ItogoItem1+=int.Parse(r["Item1"].ToString());
+                ItogoItem2+=int.Parse(r["Item2"].ToString());
+                ItogoItem3+=int.Parse(r["Item3"].ToString());
+                ItogoItem4+=int.Parse(r["Item4"].ToString());
+                ItogoItem5+=int.Parse(r["Item5"].ToString());
+                ItogoItem6+=int.Parse(r["Vsego1"].ToString());
+                ItogoItem7+=int.Parse(r["Item6"].ToString());
+                ItogoItem8+=int.Parse(r["Item7"].ToString());
+                ItogoItem9+=int.Parse(r["Item8"].ToString());
+                ItogoItem10+=int.Parse(r["Item10"].ToString());
+                ItogoItem11+=int.Parse(r["Item11"].ToString());
+                ItogoItem12+=int.Parse(r["Item12"].ToString());
+                ItogoItem13+=int.Parse(r["Item13"].ToString());
+                ItogoItem14+=int.Parse(r["Item14"].ToString());
+                ItogoItem15+=int.Parse(r["Item15"].ToString());
+                ItogoItem16+=int.Parse(r["Item16"].ToString());
+                ItogoItem17+=int.Parse(r["Vsego2"].ToString());
+                ItogoItem18+=int.Parse(r["Item16"].ToString());
+                ItogoItem19+=int.Parse(r["Item17"].ToString());
+                ItogoItem20+=int.Parse(r["Item18"].ToString());
+                ItogoItem21+=int.Parse(r["Itogo"].ToString());
 
-
-
+ 
             }
         }
 
       
         private void ImportExcelBtn_Click(object sender, RoutedEventArgs e)
         {
-            
-             
-            /*
-               BackgroundWorker worker = new BackgroundWorker();
-             worker.WorkerReportsProgress = true;
-             worker.DoWork += worker_DoWork;
-             worker.ProgressChanged += worker_ProgressChanged;
-             worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-             worker.RunWorkerAsync(10000);
-              */
-            MessageWindow mw = new MessageWindow("Выполняется импорт данных! Подождите");
-           // mw.MessageText="Выполняется импорт данных! Подождите";
-            mw.Show();
-            BackgroundWorker worker = new BackgroundWorker();
-            worker.DoWork+=Worker_DoWork;
-            worker.RunWorkerCompleted+=Worker_RunWorkerCompleted;
-            worker.RunWorkerAsync(mw);
-            ExcelManager em = new ExcelManager(this);
-            em.Init();
-            em.GreateExcelDocument();
-            em.Close();
-            mw.Close();
+            string Filename = string.Format("Учебный план {0} от {1}", CurrentGroup.NameGroup,DateTime.Now.ToShortDateString());
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.FileName = Filename; // Default file name
+            dialog.DefaultExt = ".xlsx"; // Default file extension
+            dialog.Filter = "Text documents (.xlsx)|*.xlsx"; // Filter files by extension
+           
+            bool? result = dialog.ShowDialog();
+          
+            if (result == true)
+            {
+                string filename = dialog.FileName;
+                bool yesView = ViewExcel.IsChecked.HasValue ? ViewExcel.IsChecked.Value : false;
+                ExcelManager em = new ExcelManager(this, filename, yesView);
+                em.Init();
+                em.GreateExcelDocument();
+                if(!yesView) em.Close();
+            }
+
+
+
 
         }
 
         private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
         {
-           // (e.Result as MessageWindow).Close();
-
+           
+           if(message_window != null) 
+            {
+                message_window.MessageText ="Опрерация выполнена !";
+                message_window.OkBtn.Visibility = Visibility.Visible;
+            }   
 
         }
 
         private void Worker_DoWork(object? sender, DoWorkEventArgs e)
         {
-            System.Threading.Thread.Sleep(5000);
-            e.Result = e.Argument;
+            System.Threading.Thread.Sleep(1000);
+           
+            DataTable dt = e.Argument  as DataTable;
+            bs.SaveUchPlan(dt); 
+
+        }
+
+        private void settingUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            message_window = new MessageWindow("Выполняется регистрация учебного плана! Подождите");
+            message_window.MessageText="Выполняется регистрация учебного плана! Подождите";
+            message_window.Show();
+            uchPlanGroup.DeleteUchPlan();
+            DataTable dt = (datagrid.ItemsSource as DataView).Table;
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork+=Worker_DoWork;
+            worker.RunWorkerCompleted+=Worker_RunWorkerCompleted;
+            worker.RunWorkerAsync(dt);
+
+
+            
+            
+        }
+
+        private void deleteUpBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Данный учебный план будет безвозвратно удален !"+Environment.NewLine+ "Вы уверены? ", "Внимание!!!", MessageBoxButton.YesNo)== MessageBoxResult.Yes)
+            {
+                uchPlanGroup.DeleteUchPlan();
+                this.Close();
+            }
+               
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpoServiceSystem.DataModels;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,15 +23,34 @@ namespace SpoServiceSystem.Windows
     {
         public PredmetsWindow()
         {
+            this.Loaded+=PredmetsWindow_Loaded;
             InitializeComponent();
+            
+
         }
 
+        private void PredmetsWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        bool filtergrid(object item)
+        {
+            //  if (specLB.SelectedItem == null) return true;
+            //  return ((item as Group).Id_sp==(specLB.SelectedItem as Specialnost).Id); ;
+            //if (cpecialnostCB.SelectedItem == null && kursCB==null) return true;
+            //else return false;
+            return false;
+        }
 
         private void addBtn_Click(object sender, RoutedEventArgs e)
         {
 
             DataRow dr = (datagrid.ItemsSource as DataView).Table.NewRow();
             dr["name_pr"]="Новая";
+            if (cpecialnostCB.SelectedItem != null) dr["id_sp"]=cpecialnostCB.SelectedValue;
+            if (kursCB.SelectedItem != null) dr["kurs"]=kursCB.SelectedValue;
+
             (datagrid.ItemsSource as DataView).Table.Rows.Add(dr);
         }
 
@@ -79,6 +99,39 @@ namespace SpoServiceSystem.Windows
         private void datagrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
             CollectionViewSource.GetDefaultView(datagrid.ItemsSource).Refresh();
+        }
+
+        private void ClearBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            cpecialnostCB.SelectedItem = null;
+        }
+
+        private void ClearBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            kursCB.SelectedItem = null;
+        }
+
+        private void cpecialnostCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetFilterDataGrid();
+        }
+
+        private void kursCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetFilterDataGrid();
+        }
+        void SetFilterDataGrid()
+        {
+            if (cpecialnostCB.SelectedItem == null && kursCB.SelectedItem==null)
+                ((datagrid.ItemsSource) as DataView).RowFilter="";
+            if (cpecialnostCB.SelectedItem != null && kursCB.SelectedItem==null)
+                ((datagrid.ItemsSource) as DataView).RowFilter=string.Format("id_sp={0}", cpecialnostCB.SelectedValue);
+            if (cpecialnostCB.SelectedItem == null && kursCB.SelectedItem!=null)
+                ((datagrid.ItemsSource) as DataView).RowFilter=string.Format("kurs={0}", kursCB.SelectedValue);
+            if (cpecialnostCB.SelectedItem != null && kursCB.SelectedItem!=null)
+                ((datagrid.ItemsSource) as DataView).RowFilter=string.Format("id_sp={0} and kurs={1}", cpecialnostCB.SelectedValue, kursCB.SelectedValue);
+
+
         }
     }
 }

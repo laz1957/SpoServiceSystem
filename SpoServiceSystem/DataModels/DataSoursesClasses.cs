@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -240,6 +241,128 @@ namespace SpoServiceSystem.DataModels
     }
     #endregion
 
+    #region Классы Prepod ListPrepod
+    public class Prepod : INotifyPropertyChanged
+    {
+        int id_prepod;
+        int id_kategoria;
+        string name = "";
+        string fam = "";
+        string otch = "";
+        public int Id
+        {
+            get => id_prepod;
+            set
+            {
+                if (id_prepod != value)
+                {
+                    id_prepod = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int Id_kategoria
+        {
+            get => id_kategoria;
+            set
+            {
+                if (id_kategoria != value)
+                {
+                    id_kategoria = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Name
+        {
+            get => name;
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Fam
+        {
+            get => fam;
+            set
+            {
+                if (fam != value)
+                {
+                    fam = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Otch
+        {
+            get => otch;
+            set
+            {
+                if (otch != value)
+                {
+                    otch = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Fio
+        {
+            get => string.Format("{0} {1}.{2}.", 
+                Fam, Name.Substring(0,1).ToUpper(),Otch.Substring(0, 1).ToUpper());
+        }
+        public Prepod()
+        {
+            
+        }
+        public Prepod(int _id,int _id_k, string _fam, string _name, string _otch)
+        {
+            id_prepod = _id; id_kategoria = _id_k;
+            fam = _fam;name = _name; otch=_otch;
+        }
+        
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+    }
+    public class ListPrepod : ObservableCollection<Prepod>
+    {
+        public ListPrepod()
+        {
+            GetListPrepod();
+        }
+        public void GetListPrepod()
+        {
+            BazaSoft bs = new BazaSoft();
+            string sql = "select * FROM prepods";
+            DataTable dt = bs.getTable(sql);
+            if (dt != null)
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Prepod pers = new Prepod(dr.Field<int>("id_prepod"),
+                                                         dr.Field<int>("id_kategoria"),
+                                                         dr.Field<string>("fam"),
+                                                         dr.Field<string>("name"),
+                                                         dr.Field<string>("otch")
+                                                         );
+                    this.Add(pers);
+
+                }
+
+
+        }
+    }
+
+    #endregion --------------------------
+
+
     #region Классы Group и ListGroup и GroupPlanInfo
     public class Group : INotifyPropertyChanged
     {
@@ -417,33 +540,41 @@ namespace SpoServiceSystem.DataModels
     public class GroupPlanInfo
     {
         public int Id_group { get; set; }
-        public int Semestr1 { get; set; }
-        public int Semestr2 { get; set; }
-        public int Itogo { get; set; }
+        public long Semestr1 { get; set; }
+        public long Semestr2 { get; set; }
+        public long Itogo { get; set; }
+        public long Count { get; set; }
         public GroupPlanInfo(Group group)
         {
+            CalculateItogFromPlan(group);
+        }
+        public void CalculateItogFromPlan(Group group)
+        {
             BazaSoft bs = new BazaSoft();
-            string sql = "select sum(Item1) as Semestr1,sum(Item2) as Semestr2 FROM uch_plan_groups where id_group="+group.Id.ToString();
+            string sql = "select sum(Item2) as Semestr1,sum(Item4) as Semestr2 FROM uch_plan_groups where id_group="+group.Id.ToString();
+            string sql_count = "select COUNT(*) as Count FROM uch_plan_groups where id_group="+group.Id.ToString();
             DataTable dt = bs.getTable(sql);
             if (dt.Rows.Count == 0)
             {
-                Semestr1 =0; Semestr2=0; Itogo = 0;
+                Semestr1 =0; Semestr2=0; Itogo = 0; Count=0;
             }
             else
             {
                 if (!dt.Rows[0].IsNull("Semestr1"))
-                    Semestr1= dt.Rows[0].Field<int>("Semestr1");
+                    Semestr1=(long)dt.Rows[0].Field<decimal>("Semestr1");
                 else
                     Semestr1=0;
                 if (!dt.Rows[0].IsNull("Semestr2"))
-                    Semestr2= dt.Rows[0].Field<int>("Semestr2");
+                    Semestr2= (long)dt.Rows[0].Field<decimal>("Semestr2");
                 else
                     Semestr2=0;
                 Itogo= Semestr1+Semestr2;
+                Count = bs.getCountRows("uch_plan_groups", group.Id);
             }
         }
     }
-    #endregion
+        
+        #endregion
 
     #region Классы для работы с учебным планом
     public enum UchPlanStatus
@@ -453,16 +584,38 @@ namespace SpoServiceSystem.DataModels
         Old,
         Mode
     }
-    public class UchPlanGroup
+    public class UchPlanGroup:INotifyPropertyChanged
     {
+        string stringStatus;
         public int Id { get; set; }
         public string TableName { get; set; }
+
+        public Group group { get; set; }
         public UchPlanStatus status { get; set; }
+      
+        public string StringStatus
+        {
+            get => stringStatus;
+            set
+            {
+                if (stringStatus != value)
+                {
+                    stringStatus = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
 
         BazaSoft bsManager;
-        public UchPlanGroup(Group group) : this(group.Id)
+        string sql_get_plan = "select uch_plan_groups.*,predmets.index_pr from uch_plan_groups "+
+                               "LEFT JOIN predmets ON predmets.id_pr = id_predmet where id_group={0}";
+        string sql_new_plan = "select * From get_empty_plan limit 0";
+        string sql_insert_predmets = "select * From predmets where id_sp={0} and kurs={1}";
+        string sql_delete_plan = "delete  From uch_plan_groups where id_group={0}";
+        public UchPlanGroup(Group _group) : this(_group.Id)
         {
-
+            group = _group;
         }
         public UchPlanGroup(int id_group)
         {
@@ -470,14 +623,93 @@ namespace SpoServiceSystem.DataModels
             TableName="uch_plan_groups";
             Id= id_group;
             status = GetStaus();
+           // sql_new_plan=string.Format(sql_new_plan, TableName);
         }
         UchPlanStatus GetStaus()
         {
            int countRows = bsManager.getCountRows(TableName, Id);
-            if (countRows == 0) return UchPlanStatus.New;
-            else return UchPlanStatus.Norma;
+            if (countRows == 0)
+            {
+                StringStatus ="Новый";
+                return UchPlanStatus.New;
+            } 
+            {
+                StringStatus ="Норма";
+                return UchPlanStatus.Norma;
+            }
             
         }
-        #endregion
+        public void DeleteUchPlan()
+        {
+            string sql =string.Format(sql_delete_plan,group.Id);
+            int n = bsManager.RunCommand(sql);
+        }
+        public DataView GetUchPlan()
+        {
+           string sql = string.Format(sql_get_plan,group.Id);
+           DataTable dt = bsManager.getTable_AvtoIncriment(sql);
+           // AddAvtoIncrementColumn(dt);
+           
+            InsertInfoColumns(dt);
+            return dt.DefaultView;
+        
+         }
+        public DataView GetNewUchPlan()
+        {
+            int count = 0;
+            DataTable dt = bsManager.getTable(sql_new_plan);
+            AddAvtoIncrementColumn(dt);
+            string sql = string.Format(sql_insert_predmets, group.Id_sp, group.Kurs);
+            DataTable dtSourse = bsManager.getTable(sql);
+            foreach (DataRow dr in dtSourse.Rows)
+            {
+                DataRow rTarget = dt.NewRow();
+                rTarget["id_group"] = group.Id;
+                rTarget["id_predmet"]=dr["id_pr"];
+                rTarget["index_pr"]=dr[3].ToString();
+                rTarget["name_pr"]=dr["name_pr"].ToString();
+
+                foreach (DataColumn colunm in dt.Columns) 
+                {
+                    string ColName = colunm.ColumnName;
+                    if(ColName.IndexOf("Item") !=-1)
+                    {
+                        rTarget[ColName] =0;
+                    }
+                }
+                dt.Rows.Add(rTarget);
+            }
+            InsertInfoColumns(dt);
+            return dt.DefaultView;
+        }
+        void AddAvtoIncrementColumn(DataTable dt)
+        {
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+        }
+        void InsertInfoColumns(DataTable dt)
+        {
+
+            dt.Columns.Add("Vsego1", typeof(Int64));
+            dt.Columns.Add("Vsego2", typeof(Int64));
+            dt.Columns.Add("Itogo", typeof(Int64));
+            dt.Columns["Vsego1"].Expression = "Item2+Item4";
+            dt.Columns["Vsego2"].Expression = "Item6+Item7+Item8+Item9+Item10+Item11+Item12+Item13+Item14+Item15";
+            dt.Columns["Itogo"].Expression = "Vsego2+Item16+Item17+Item18";
+          
+        }
+
+        
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
     }
+    #endregion
 }

@@ -65,7 +65,7 @@
                                        ItemsSource="{Binding Source={StaticResource kantgories}}"
                                        DisplayMemberPath="Name"
                                        SelectedValuePath="Id"
-                                       SelectedValueBinding="{Binding Path=Id}" 
+                                       SelectedValueBinding="{Binding Path=id_kategoria}" 
                                        >
                 </DataGridComboBoxColumn>
                 <DataGridTextColumn Width="*"  Header="Фамилия" Binding="{Binding Path=fam}"/>

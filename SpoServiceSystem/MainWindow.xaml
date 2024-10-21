@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoServiceSystem"
         mc:Ignorable="d"
-        Title="Главное окно программы" Height="450" Width="800">
+        Icon="pack://application:,,,/ImageLib;component/Resources/images12.jpg"
+        Title="Главное окно программы" Height="600" Width="900">
     <Window.CommandBindings>
 
         <CommandBinding  Command = "Zoom"   CanExecute="CommandBinding_CanExecute"         Executed="CommandBinding_Executed" />
@@ -22,6 +23,7 @@
         </Grid.RowDefinitions>
         <DockPanel>
             <Menu  DockPanel.Dock = "Top"   >
+               
                 <MenuItem Header="Справочники">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
@@ -100,13 +102,14 @@
  
 
 
-                <MenuItem Header="Учебные планы">
+                <MenuItem Header="Настройки приложения">
                     <MenuItem.Icon>
-                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-x-troff-man.png
+" Height="36" />
                     </MenuItem.Icon>
-                    <MenuItem Header="Новый учебный план" Command="Zoom"  CommandParameter="NUPL">
+                    <MenuItem Header="Насиройки сервера базы данных" Command="Zoom"  CommandParameter="MYSQL">
                         <MenuItem.Icon>
-                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.database.png" Height="32" />
                         </MenuItem.Icon>
                         <MenuItem.CommandBindings>
                             <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />

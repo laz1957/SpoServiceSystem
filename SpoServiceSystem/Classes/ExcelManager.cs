@@ -31,19 +31,26 @@ namespace SpoServiceSystem.Classes
         float Koefficient;
         string excelPatch;
         string excelFileName;
+        bool isVisible = false;
         public string ExcelFileName
         {
             get { return string.Format("{0}\\{1}", excelPatch, excelFileName); } 
         }
         public ExcelManager() {
             excelPatch = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-            excelFileName ="test1.xls";
+            excelFileName ="test0.xls";
             Koefficient =256F/ (float)System.Windows.SystemParameters.PrimaryScreenWidth;
 
         }
         public ExcelManager(UchPlanWindow _window) :this() 
         {
             window= _window;
+        }
+        public ExcelManager(UchPlanWindow _window,string filename,bool visible) : this(_window)
+        {
+            excelPatch =Path.GetDirectoryName(filename);
+            excelFileName =Path.GetFileName(filename);
+            isVisible = visible;
         }
         public int Close()
         {
@@ -79,7 +86,7 @@ namespace SpoServiceSystem.Classes
             excelApp = new Excel.Application()
             {
                
-                Visible = false,
+                Visible = isVisible,
                 //Количество листов в рабочей книге
                 SheetsInNewWorkbook = 1
             };

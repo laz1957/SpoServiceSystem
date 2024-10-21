@@ -1,0 +1,77 @@
+﻿<Window x:Class="SpoServiceSystem.Windows.ServerSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpoServiceSystem.Windows"
+        xmlns:controls="clr-namespace:SpoServiceSystem.Controls"
+        mc:Ignorable="d"
+        Title="Настройки приложения" Height="600" Width="800">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Height"   Value="36"/>
+            <Setter Property="Width"   Value="250"/>
+        </Style>
+    </Window.Resources>
+    
+    
+    <controls:CustomGrid GridLineBrush="Black" GridLineThickness="2" 
+                          GridLinesVisibility="Both" Margin="30" Background="Silver">
+        <controls:CustomGrid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </controls:CustomGrid.ColumnDefinitions>
+        <controls:CustomGrid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </controls:CustomGrid.RowDefinitions>
+        <Border Background="LightBlue" BorderBrush="Black" BorderThickness="2">
+             <TextBlock Grid.Column="0" Text="Название параметра"/>
+        </Border>
+        <Border Grid.Column="1" Background="LightBlue" BorderBrush="Black" BorderThickness="2">
+            <TextBlock  Text="Значение параметра"/>
+        </Border>
+        <Border Grid.Row="1" BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBlock  Text="Имя сервера БД"/>
+        </Border>
+        <Border Grid.Row="2" BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBlock Grid.Row="2" Text="Имя Базы данных"/>
+        </Border>
+        <Border Grid.Row="3" BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBlock Grid.Row="3" Text="Имя пользователя БД"/>
+        </Border>
+        <Border Grid.Row="4" BorderThickness="0,0,1,1" BorderBrush="Black">
+        <TextBlock Grid.Row="4" Text="Шаблон строки подключения"/>
+        </Border>
+        <Border Grid.Row="5" BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBlock Grid.Row="5" Text="Пароль"/>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1"  BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBox  Text=""/>
+        </Border>
+        <Border Grid.Row="2" Grid.Column="1"  BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBox  Text=""/>
+        </Border>
+        <Border Grid.Row="3" Grid.Column="1"  BorderThickness="0,0,1,1" BorderBrush="Black">
+            <TextBox  Text=""/>
+        </Border>
+        <Border Grid.Row="4" Grid.Column="1"  BorderThickness="0,0,0,1" BorderBrush="Black">
+            <TextBox  Text=""/>
+        </Border>
+        <Border Grid.Row="5" Grid.Column="1"  BorderThickness="0,0,0,1" BorderBrush="Black">
+            <TextBox  Text=""/>
+        </Border>
+    </controls:CustomGrid>
+</Window>

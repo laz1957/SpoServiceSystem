@@ -68,9 +68,17 @@ namespace SpoServiceSystem
                     SpoServiceSystem.Windows.ShablonPlanWindow winSHUP = new SpoServiceSystem.Windows.ShablonPlanWindow();
                     winSHUP.Show();
                     break;
-                case "NUPL":
-                    SpoServiceSystem.Windows.UchPlanWindow winNUPL = new SpoServiceSystem.Windows.UchPlanWindow();
-                    winNUPL.Show();
+                case "MYSQL":
+                   // SpoServiceSystem.Windows.UchPlanWindow winNUPL = new SpoServiceSystem.Windows.UchPlanWindow();
+                   // winNUPL.Show();
+                   
+                    // Настройки программы
+
+                    Windows.ServerSettingsWindow ssw = new Windows.ServerSettingsWindow();    
+                    ssw.Show();
+
+
+
                     break;
                 case "UGR":
                     SpoServiceSystem.Controls.AllGroupsUserControl aguc = new Controls.AllGroupsUserControl();

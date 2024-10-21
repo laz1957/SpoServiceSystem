@@ -39,7 +39,7 @@ namespace SpoServiceSystem.Windows
             if (dtCange != null)
             {
 
-                int n = (TopGrid.DataContext as DataModels.BazaSoft).SaveSpecialnost(dt);
+                int n = (TopGrid.DataContext as DataModels.BazaSoft).SavePrepods(dt);
                 if (n > 0)
                 {
                     dt.AcceptChanges();

@@ -7,21 +7,32 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         x:Name="messageWindow"
-        Title="Окно сообщений" Height="250" Width="400">
+        Title="Окно сообщений" Height="250" Width="500">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
-        <StackPanel Background="LightBlue"></StackPanel>
-        <StackPanel Grid.Row="1">
-            <TextBlock Text="{Binding ElementName=messageWindow,Path=MessageText}"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"
-                       ></TextBlock>
+        <StackPanel Background="{Binding Source={StaticResource  NormalBrush}}">
+            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                       FontWeight="Bold" Foreground="Maroon"
+                Text="Информационное сообщение системы обработки информации">
+                
+            </TextBlock>
         </StackPanel>
-        <StackPanel Grid.Row="2" Background="LightBlue">
-            
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="30">
+            <Image Source="pack://application:,,,/ImageLib;component/Resources/info.png" Height="48" />
+           
+            <TextBlock Text="{Binding ElementName=messageWindow,Path=MessageText}"
+                       VerticalAlignment="Center" Margin="10,0,0,0"
+                       ></TextBlock>
+         
+        </StackPanel>
+        <StackPanel  Grid.Row="2" Background="{Binding Source={StaticResource  NormalBrush}}">
+            <Button x:Name="OkBtn"  Width="80" Height="30" Click="OkBtn_Click" 
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center" Visibility="Visible">OK</Button>
         </StackPanel>
     </Grid>
 </Window>

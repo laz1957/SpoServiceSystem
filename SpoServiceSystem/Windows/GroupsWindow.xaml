@@ -13,6 +13,7 @@
         
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
         <data:BazaSoft x:Key="basatable"></data:BazaSoft>
+        <data:ListSpecialnost x:Key="listSpecialnost"/>
         <ObjectDataProvider  x:Key="table" 
                              ObjectType="{x:Type data:BazaSoft}"
                              MethodName="getDataTableView" >
@@ -70,12 +71,14 @@
                 <DataGridTextColumn Header="Код группы" Binding="{Binding Path=id_group}"/>
                 <DataGridTextColumn Width="0.5*"  Header="Название группы" Binding="{Binding Path=name_group}"/>
                 <DataGridComboBoxColumn Header="Специальность" Width="0.3*"
-                        ItemsSource="{Binding Source={StaticResource spec_table}}"
-                        DisplayMemberPath="name_sp"
-                        SelectedValuePath="id_sp"
+                        ItemsSource="{Binding Source={StaticResource listSpecialnost}}"
+                        DisplayMemberPath="FullName"
+                        SelectedValuePath="Id"
                         SelectedValueBinding="{Binding Path=id_sp}" 
                         >
 
+
+                   
                 </DataGridComboBoxColumn>
                 <DataGridComboBoxColumn Header="Тип обучения" Width="0.3*"
                     ItemsSource="{Binding Source={StaticResource tip_obuch_table}}"

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Runtime.CompilerServices;
 
 
@@ -106,7 +107,91 @@ namespace SpoServiceSystem.DataModels
             Add(new Kurs() { Id=4, Name="Четвертый" });
         }
     }
-    public class Predmet:INotifyPropertyChanged
+
+    
+
+    public class Predmet : INotifyPropertyChanged
+    {
+        int id_pr;
+        int id_sp;
+        int kurs;
+        string index_pr;
+        string name_pr;
+        public int Id_pr
+        {
+            get { return id_pr; }
+            set { id_pr=value; OnPropertyChanged(); }
+        }
+        public int Id_sp
+        {
+            get { return id_sp; }
+            set { id_sp=value; OnPropertyChanged(); }
+        }
+        public int Kurs
+        {
+            get { return kurs; }
+            set { kurs=value; OnPropertyChanged(); }
+        }
+        public string Index_pr
+        {
+            get { return index_pr; }
+            set { index_pr=value; 
+                OnPropertyChanged(); }
+        }
+        public string Name_pr
+        {
+            get { return name_pr; }
+            set { name_pr=value; OnPropertyChanged(); }
+        }
+
+        public Predmet(int _id_pr,int _id_sp,int _kurs,string _index,string _name)
+        {
+            name_pr = _name; index_pr=_index; 
+            id_pr=_id_pr; id_sp=_id_sp; kurs=_kurs;     
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+    }
+
+    public class Prepmets : ObservableCollection<Predmet>
+    {
+        public Prepmets() 
+        {
+            Init();
+        }
+        void Init()
+        {
+            string sql = "select * from predmets";
+            BazaSoft bs = new BazaSoft();
+            DataTable dt = bs.getTable(sql);
+            if(dt != null)
+            {
+                foreach(DataRow row in dt.Rows)
+                {
+                    if (row["id_sp"].GetType().Name != "DBNull")
+                    {
+
+                        int id0 = Convert.ToInt32(row["id_pr"]);
+                        int id1 = Convert.ToInt32(row["id_sp"]);
+                        int id2 = Convert.ToInt32(row["kurs"]);
+                        string s1 = Convert.ToString(row["index_pr"]);
+                        string s2 = Convert.ToString(row["name_pr"]);
+                        Predmet pr = new Predmet(id0, id1, id2, s1, s2);
+
+                        this.Add(pr);
+                    }
+                }
+            }
+        }
+    }
+
+    #region нерабочие классы
+    public class Predmet_1:INotifyPropertyChanged
     {
         public int Id { get; set; }
         public int id_sp { get; set; }
@@ -232,11 +317,11 @@ namespace SpoServiceSystem.DataModels
         }
 
     }
-    public class Prepmets : ObservableCollection<Predmet>
+    public class Prepmets_1 : ObservableCollection<Predmet_1>
     {
-        public Prepmets()
+        public Prepmets_1()
         {
-            Add(new Predmet() { Id=1, Index="MDX", Name=new Kurs() { Id=1, Name="Первый" } , Item1=0, Item2=18, Item3=0, Item4=18, Item5=0,
+            Add(new Predmet_1() { Id=1, Index="MDX", Name=new Kurs() { Id=1, Name="Первый" } , Item1=0, Item2=18, Item3=0, Item4=18, Item5=0,
                                 Item6=22,Item7=14,Item8=0, Item9=0, Item10=0, Item11=0, Item12=0, Item13=0,
                 Item14=0,
                 Item15=0,
@@ -244,7 +329,7 @@ namespace SpoServiceSystem.DataModels
                 Item17=0,
                 Item18=0
             });
-            Add(new Predmet()
+            Add(new Predmet_1()
             {
                 Id=1,
                 Index="WWW",
@@ -272,6 +357,6 @@ namespace SpoServiceSystem.DataModels
            
         }
     }
-
+    #endregion
 
 }

@@ -9,7 +9,7 @@
         xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
         
-        Title="Предметы" Height="450" Width="800">
+        Title="Предметы" Height="600" Width="950">
     <Window.Resources>
         
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
@@ -42,13 +42,35 @@
             <Button  x:Name="delBtn" Width="100" Click="delBtn_Click">Delete</Button>
             <Button  x:Name="exitBtn" Width="100" Click="exitBtn_Click">Выход</Button>
         </DockPanel>
-        <DockPanel Grid.Row="0" Background="LightBlue">
+        <DockPanel Grid.Row="0" Background="LightBlue" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"> 
             <TextBlock Text="Справочник: Учебные предметы" 
            Foreground="Maroon" 
            FontWeight="Bold"
            FontSize="24"
            VerticalAlignment="Center"
-           HorizontalAlignment="Center"/>
+           HorizontalAlignment="Left"/>
+            <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right">
+                <TextBlock Text="Фильтры:" Margin="10,0,10,0"  VerticalAlignment="Center"></TextBlock>
+                <ComboBox x:Name="cpecialnostCB" HorizontalAlignment="Right"
+                          Width="200" Height="24" Margin="10,0,0,0"
+                          ItemsSource="{Binding Source={StaticResource spec_table}}"
+                            DisplayMemberPath="fullname"
+                            SelectedValuePath="id_sp"
+                            SelectionChanged="cpecialnostCB_SelectionChanged"   
+                          >
+
+                </ComboBox>
+                <Button x:Name="ClearBtn1" Width="40" Height="24" Click="ClearBtn1_Click">X</Button>  
+                <ComboBox x:Name="kursCB" HorizontalAlignment="Right"
+                          Width="100" Height="24" Margin="10,0,0,0"
+                          ItemsSource="{Binding Source={StaticResource kurses}}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Id"
+                          SelectionChanged="kursCB_SelectionChanged"
+                    >
+                </ComboBox>
+                <Button x:Name="ClearBtn2" Width="40" Height="24" Click="ClearBtn2_Click">X</Button>
+            </StackPanel>
         </DockPanel>
         <DataGrid Grid.Row="1" x:Name="datagrid"
                   ItemsSource="{Binding Source={StaticResource table}}" 
