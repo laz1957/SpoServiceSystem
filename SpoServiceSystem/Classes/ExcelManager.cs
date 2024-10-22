@@ -319,8 +319,60 @@ workbook.CalculationOnSave = true;
 
             TableTopRange.Calculate();
 
-           
+            //--------- Формирование верхней шапки документа
+            Excel.Range cellRange = (Excel.Range)TargetSheet.Cells[1, 1];
+            Excel.Range rowRange = cellRange.EntireRow;
+            rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+            rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+            rowRange.Insert(Excel.XlInsertShiftDirection.xlShiftDown, false);
+
+            SpoServiceSystem.DataModels.Group gr = window.CurrentGroup;
+            string spec = string.Format("{0} {1}",gr.Cod_sp,gr.Name_sp);
+            int Row = 2;
+            int Column = 1;
+            SetTitulRangeItem(TargetSheet,Row,2,Column,1,"Профессия"+Environment.NewLine+"Специальность");
+            Column =3;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 0, spec);
+            Column =4;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 0,"УО");
+            Column =5;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 2, gr.Name_uo);
+            Column =12;
+            Column =8;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 1, "Группа" );
+            Column =10;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 1, gr.NameGroup);
+            Column =12;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 0, "База" );
+            Column =13;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 0, gr.Baza_sp.ToString() );
+            Column =14;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 2, "Финансирование");
+            Column =17;
+            SetTitulRangeItem(TargetSheet, Row,2, Column, 2, gr.Name_tip);
+            Column =20;
+            SetTitulRangeItem(TargetSheet, Row, 0, Column, 4, "Количество обучающихся");
+            SetTitulRangeItem(TargetSheet, Row+1, 0, Column, 4, "1 подгруппа");
+            SetTitulRangeItem(TargetSheet, Row+2, 0, Column, 4, "2 подгруппа");
+            Column =25;
+            SetTitulRangeItem(TargetSheet, Row, 0, Column, 0,gr.Count.ToString());
+            SetTitulRangeItem(TargetSheet, Row+1, 0, Column, 0, gr.Count_1.ToString());
+            SetTitulRangeItem(TargetSheet, Row+2, 0, Column, 0,gr.Count_1.ToString());
         }
+
+        void SetTitulRangeItem(Excel.Worksheet Sheet,int Row,int count_row, 
+            int Column,int count_column,string text)
+        {
+            Excel.Range Range0 = (Excel.Range)Sheet.Cells[Row, Column];
+            Excel.Range Range1 = (Excel.Range)Sheet.Cells[Row+count_row, Column+count_column];
+            Excel.Range range10 = Sheet.get_Range(Range1, Range0);
+            range10.Merge();
+            range10.Borders.Color = ColorTranslator.ToOle(Color.Black);
+            range10.Value = text;
+            range10.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+            range10.VerticalAlignment = Excel.XlHAlign.xlHAlignCenter; ;
+        }
+      
 
     }
 }

@@ -99,6 +99,7 @@ namespace SpoServiceSystem.DataModels
                     MySqlDataAdapter adapter = new MySqlDataAdapter(sqlString, conn);
                     adapter.Fill(dt);
                     conn.Close();
+                    dt.AcceptChanges();
 
                 }
                 catch (Exception e)
@@ -293,10 +294,10 @@ namespace SpoServiceSystem.DataModels
             int n = -1;
             string TableName = "uch_groups";
             string UpdateString = "UPDATE  uch_groups SET " +
-                                  "id_sp=@id_sp,id_tip=@id_tip,name_group=@name_group,count=@count,count_1=@count_1,count_2=@count_2,data=@data" +
+                                  "id_uo=@id_uo,id_sp=@id_sp,id_tip=@id_tip,name_group=@name_group,count=@count,count_1=@count_1,count_2=@count_2,data=@data" +
                                 " WHERE id_group=@id_group";
-            string InsertString = "INSERT INTO uch_groups (id_sp,id_tip,name_group,count,count_1,count_2,data)" +
-                                   "VALUES(@id_sp,@id_tip,@name_group,@count,@count_1,@count_2,@data)";
+            string InsertString = "INSERT INTO uch_groups (id_uo,id_sp,id_tip,name_group,count,count_1,count_2,data)" +
+                                   "VALUES(@id_uo,@id_sp,@id_tip,@name_group,@count,@count_1,@count_2,@data)";
             string DeleteString = "DELETE FROM uch_groups WHERE id_group=@id_group";
 
 
@@ -311,9 +312,10 @@ namespace SpoServiceSystem.DataModels
                     {
                         conn.Open();
                         MySqlDataAdapter adapter = new MySqlDataAdapter();
-                        MySqlCommand com = new MySqlCommand(UpdateStr, conn);
+                        MySqlCommand com = new MySqlCommand(UpdateString, conn);
 
-                        com.Parameters.Add("@id_group", MySqlDbType.Int32, 32, "id_prepod");
+                        com.Parameters.Add("@id_group", MySqlDbType.Int32, 32, "id_group");
+                        com.Parameters.Add("@id_uo", MySqlDbType.Int32, 32, "id_uo");
                         com.Parameters.Add("@id_sp", MySqlDbType.Int32, 32, "id_sp");
                         com.Parameters.Add("@id_tip", MySqlDbType.Int32, 32, "id_tip");
                         com.Parameters.Add("@name_group", MySqlDbType.VarChar, 45, "name_group");
@@ -324,6 +326,7 @@ namespace SpoServiceSystem.DataModels
                         adapter.UpdateCommand = com;
 
                         com = new MySqlCommand(InsertString, conn);
+                        com.Parameters.Add("@id_uo", MySqlDbType.Int32, 32, "id_uo");
                         com.Parameters.Add("@id_sp", MySqlDbType.Int32, 32, "id_sp");
                         com.Parameters.Add("@id_tip", MySqlDbType.Int32, 32, "id_tip");
                         com.Parameters.Add("@name_group", MySqlDbType.VarChar, 45, "name_group");

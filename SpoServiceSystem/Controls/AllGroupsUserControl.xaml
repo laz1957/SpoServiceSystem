@@ -13,6 +13,7 @@
         <model:ListSpecialnost x:Key="listSpecialnost" />
         <model:ListGroup x:Key="listGroup" />
         <model:Kurses x:Key="listKurs" />
+        <model:ListOtdelenie x:Key="listOtdelenie" />
     </UserControl.Resources>
     <local:CustomGrid GridLineBrush="Black" GridLineThickness="5"
                      
@@ -26,19 +27,20 @@
         <local:CustomGrid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="*"/>
-            <RowDefinition Height="60"/>
+ <!--           <RowDefinition Height="60" /> -->
         </local:CustomGrid.RowDefinitions>
         <GridSplitter Grid.Column="1" Grid.RowSpan="3"  ShowsPreview="True" Width="5" Background="Gray"
            HorizontalAlignment="Left" VerticalAlignment="Stretch" />
         <GridSplitter Grid.Column="2" Grid.RowSpan="3"  ShowsPreview="True" Width="5" Background="Gray"
             HorizontalAlignment="Left" VerticalAlignment="Stretch" />
         <DockPanel Background="{Binding Source={StaticResource NormalBrush}}" Margin="0,0,1,0">
-           
+            <TextBlock Text="Выбор учебных групп" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </DockPanel>
         <DockPanel Background="{Binding Source={StaticResource NormalBrush}}" Grid.Column="1" Margin="2,0,0,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="0.3*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="100"/>
                 </Grid.ColumnDefinitions>
@@ -47,11 +49,14 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="Фильтры:" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="Cпециальность" HorizontalAlignment="Center"/>
-                <TextBlock Grid.Column="2" Text="Курс" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Отделение" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Cпециальность" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Курс" HorizontalAlignment="Center"/>
                 <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center"
-                           Foreground="Maroon" Text="{Binding ElementName=specLB, Path=SelectedItem.FullName}"></TextBlock>
+            Foreground="Maroon" Text="{Binding ElementName=otdelenieLB, Path=SelectedItem.Name}"></TextBlock>
                 <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center"
+                           Foreground="Maroon" Text="{Binding ElementName=specLB, Path=SelectedItem.FullName}"></TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center"
                            Foreground="Maroon" Text="{Binding ElementName=kursLB, Path=SelectedItem.Name}"></TextBlock>
             </Grid>
         </DockPanel>
@@ -65,6 +70,16 @@
             </StackPanel>
         </DockPanel>
         <StackPanel  Grid.Row="1" Margin="0,0,1,0" >
+            <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
+            <TextBlock Text="Отделение" HorizontalAlignment="Center"></TextBlock>
+            <ListBox x:Name="otdelenieLB"
+                 SelectionChanged="otdelenieLB_SelectionChanged"
+                 ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+                 DisplayMemberPath="Name"
+                 Margin="10"
+             /> 
+
+
             <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
             <TextBlock Text="Курс" HorizontalAlignment="Center"></TextBlock>
             <ListBox x:Name="kursLB"
@@ -92,7 +107,7 @@
             
         </ListBox>
             <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
-            <Button x:Name="sbrosBtn" Click="sbrosBtn_Click">сброс</Button>
+            <Button x:Name="sbrosBtn" Click="sbrosBtn_Click">Cброс фильтров</Button>
         </StackPanel>
         <DockPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
         <ListBox x:Name="groupLB" ItemsSource="{Binding Source={StaticResource listGroup}}"
@@ -109,10 +124,15 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                <DockPanel Width="120" Height="80" Background="Azure">
-                    <TextBlock Text="{Binding Path=NameGroup}"/>
-                </DockPanel>
-                </DataTemplate>
+                       
+                <DockPanel Width="140" Height="80" Background="White">
+                            <Rectangle Fill="{Binding Source={StaticResource VerticalBrush}}" Width="20" />
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/images10.jpg" Height="42" />
+                            <TextBlock Text="{Binding Path=NameGroup}" VerticalAlignment="Center"/>
+                           
+                        </DockPanel>
+                     
+                    </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         </DockPanel>

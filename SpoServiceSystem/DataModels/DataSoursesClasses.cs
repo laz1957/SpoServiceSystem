@@ -12,6 +12,93 @@ using System.Threading.Tasks;
 
 namespace SpoServiceSystem.DataModels
 {
+    public class Otdelenie : INotifyPropertyChanged
+    {
+        int id_uo;
+        string name_uo = "";
+        string comment_uo = "";
+        public int Id
+        {
+            get => id_uo;
+            set
+            {
+                if (id_uo != value)
+                {
+                    id_uo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Name
+        {
+            get => name_uo;
+            set
+            {
+                if (name_uo != value)
+                {
+                    name_uo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Comment
+        {
+            get => comment_uo;
+            set
+            {
+                if (comment_uo != value)
+                {
+                    comment_uo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public Otdelenie()
+        {
+            id_uo = 0; name_uo = string.Empty; comment_uo = string.Empty;
+        }
+        public Otdelenie(int _id, string _name, string kurz)
+        {
+            id_uo = _id; name_uo = _name; comment_uo=kurz;
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        }
+
+    }
+    public class ListOtdelenie : ObservableCollection<Otdelenie>
+    {
+        public ListOtdelenie()
+        {
+            GetListOtdelenie();
+        }
+        public void GetListOtdelenie()
+        {
+            BazaSoft bs = new BazaSoft();
+            string sql = "select * FROM uch_otdelenie";
+            DataTable dt = bs.getTable(sql);
+
+            if (dt != null)
+                foreach (DataRow dr in dt.Rows)
+                {
+                    Otdelenie sp = new Otdelenie(dr.Field<int>("id_uo"),
+                                                       
+                                                         dr.Field<string>("name_uo"),
+                                                         dr.Field<string>("comment_uo")
+                                                         );
+                    this.Add(sp);
+
+                }
+
+
+        }
+    }
+
     #region Классы Kvalification ListKvalification
     public class Kvalification : INotifyPropertyChanged
     {
@@ -373,9 +460,15 @@ namespace SpoServiceSystem.DataModels
         string name_group = "";
         string name_tip = "";
         string cod_sp = "";
+        string name_sp = "";
         int srok_mes = 0;
         int baza_sp = 0;
         long kurs = 0;
+        int id_uo;
+        string name_uo = "";
+        int count;
+        int count_1;
+        int count_2;
         public int Id
         {
             get => id_group;
@@ -396,6 +489,18 @@ namespace SpoServiceSystem.DataModels
                 if (id_sp != value)
                 {
                     id_sp = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int Id_uo
+        {
+            get => id_uo;
+            set
+            {
+                if (id_uo != value)
+                {
+                    id_uo = value;
                     OnPropertyChanged();
                 }
             }
@@ -466,6 +571,30 @@ namespace SpoServiceSystem.DataModels
                 }
             }
         }
+        public string Name_sp
+        {
+            get => name_sp;
+            set
+            {
+                if (name_sp != value)
+                {
+                    name_sp = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public string Name_uo
+        {
+            get => name_uo;
+            set
+            {
+                if (name_uo != value)
+                {
+                    name_uo = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public long Kurs
         {
             get => kurs;
@@ -478,19 +607,64 @@ namespace SpoServiceSystem.DataModels
                 }
             }
         }
+        public int Count
+        {
+            get => count;
+            set
+            {
+                if (count != value)
+                {
+                    count = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int Count_1
+        {
+            get => count_1;
+            set
+            {
+                if (count_1 != value)
+                {
+                    count_1 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int Count_2
+        {
+            get => count_2;
+            set
+            {
+                if (count_2 != value)
+                {
+                    count_2 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public GroupPlanInfo groupPlanInfo { get; set; }
         public Group()
         {
-            id_sp = 0; name_group = string.Empty; cod_sp = string.Empty;
+            id_sp = 0; name_group = string.Empty; 
+            cod_sp = string.Empty; name_sp = string.Empty;
         }
-        public Group(int _id, int _id_sp, int _idkf, string _name, string _cod, long _kurs, int _srok, int _baza, int idtip, string nametip)
+        public Group(int _id, int _id_sp, int _idkf, 
+            string _name, string _cod, string _name_sp, 
+            long _kurs, int _srok, int _baza, int idtip, 
+            string nametip,int _id_uo,string _name_uo,
+            int _count,int _count_1,int _count_2)
         {
             id_group = _id; name_group = _name;
             id_sp=_id_sp;
             id_kf = _idkf; cod_sp=_cod;
+            name_sp=_name_sp;
             srok_mes = _srok; baza_sp=_baza;
             kurs= _kurs;
             id_tip=idtip; name_tip=nametip;
+            id_uo=_id_uo; name_uo=_name_uo;
+            count=_count; count_1 = _count_1;
+            count_2 = _count_2;
             groupPlanInfo = new GroupPlanInfo(this);
         }
 
@@ -524,12 +698,18 @@ namespace SpoServiceSystem.DataModels
                         dr.Field<int>("id_kf"),
                         dr.Field<string>("name_group"),
                         dr.Field<string>("cod_sp"),
+                        dr.Field<string>("name_sp"),
                         dr.Field<long>("kurs"),
                         dr.Field<int>("srok_mes"),
                         dr.Field<int>("baza_sp"),
                         dr.Field<int>("id_tip"),
-                        dr.Field<string>("name_tip")
-                          );
+                        dr.Field<string>("name_tip"),
+                        int.Parse(dr["id_uo"].ToString()),
+                        dr.Field<string>("name_uo"),
+                        int.Parse(dr["count"].ToString()),
+                        int.Parse(dr["count_1"].ToString()),
+                        int.Parse(dr["count_2"].ToString())
+                        );                        ;
                     this.Add(sp);
 
                 }
@@ -633,6 +813,7 @@ namespace SpoServiceSystem.DataModels
                 StringStatus ="Новый";
                 return UchPlanStatus.New;
             } 
+            else
             {
                 StringStatus ="Норма";
                 return UchPlanStatus.Norma;
@@ -648,9 +829,10 @@ namespace SpoServiceSystem.DataModels
         {
            string sql = string.Format(sql_get_plan,group.Id);
            DataTable dt = bsManager.getTable_AvtoIncriment(sql);
-           // AddAvtoIncrementColumn(dt);
+         
            
             InsertInfoColumns(dt);
+            dt.AcceptChanges();
             return dt.DefaultView;
         
          }

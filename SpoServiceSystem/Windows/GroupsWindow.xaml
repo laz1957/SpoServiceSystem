@@ -8,12 +8,13 @@
          xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
          xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
-        Title="GroupsWindow" Height="450" Width="800">
+        Title="GroupsWindow" Height="450" Width="900">
     <Window.Resources>
         
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
         <data:BazaSoft x:Key="basatable"></data:BazaSoft>
         <data:ListSpecialnost x:Key="listSpecialnost"/>
+        <data:ListOtdelenie x:Key="listOtdelenie"/>
         <ObjectDataProvider  x:Key="table" 
                              ObjectType="{x:Type data:BazaSoft}"
                              MethodName="getDataTableView" >
@@ -67,9 +68,23 @@
             <DataGrid.ColumnHeaderStyle>
                 <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource SlovarHeaderStyle}" />
             </DataGrid.ColumnHeaderStyle>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}}"/>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Код группы" Binding="{Binding Path=id_group}"/>
-                <DataGridTextColumn Width="0.5*"  Header="Название группы" Binding="{Binding Path=name_group}"/>
+                <DataGridTextColumn Header="Код группы" Binding="{Binding Path=id_group}" Width="60"/>
+                <DataGridTextColumn Width="0.3*"  Header="Название группы" Binding="{Binding Path=name_group}"/>
+
+                <DataGridComboBoxColumn Header="Отделение" Width="0.2*"
+                     ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+                     DisplayMemberPath="Name"
+                     SelectedValuePath="Id"
+                     SelectedValueBinding="{Binding Path=id_uo}" 
+         >
+        </DataGridComboBoxColumn>
+
                 <DataGridComboBoxColumn Header="Специальность" Width="0.3*"
                         ItemsSource="{Binding Source={StaticResource listSpecialnost}}"
                         DisplayMemberPath="FullName"
@@ -80,7 +95,7 @@
 
                    
                 </DataGridComboBoxColumn>
-                <DataGridComboBoxColumn Header="Тип обучения" Width="0.3*"
+                <DataGridComboBoxColumn Header="Тип обучения" Width="0.1*"
                     ItemsSource="{Binding Source={StaticResource tip_obuch_table}}"
                     DisplayMemberPath="name_tip"
                     SelectedValuePath="id_tip"
@@ -88,7 +103,7 @@
                     >
 
                 </DataGridComboBoxColumn>
-                <DataGridTemplateColumn Header="Дата поступления" Width="0.3*">
+                <DataGridTemplateColumn Header="Дата поступления" Width="0.2*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding data,StringFormat=dd.MM.yyyy}" />
@@ -100,6 +115,9 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellEditingTemplate>
                 </DataGridTemplateColumn>
+                <class:DataGridNumericColumn Header="Кол-во" Binding="{Binding Path=count}" Width="60"/>
+                <class:DataGridNumericColumn Header="1 п/г" Binding="{Binding Path=count_1}" Width="60"/>
+                <class:DataGridNumericColumn Header="2 п/г" Binding="{Binding Path=count_2}" Width="60"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

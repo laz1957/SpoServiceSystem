@@ -219,7 +219,8 @@ namespace SpoServiceSystem.Windows
             // Конструктор для существующего учебного плана
             CurrentGroup = group;
             uchPlanGroup = new UchPlanGroup(group);
-            //uchPlanGroup.status = UchPlanStatus.New;
+            uchPlanGroup.status = UchPlanStatus.Norma;
+            uchPlanGroup.StringStatus = "Норма";
             // datagrid.ItemsSource = bs.GenerateUchPlanDataView(group.Id);
             datagrid.ItemsSource = uchPlanGroup.GetUchPlan();
             datagrid.LoadingRow+=Datagrid_LoadingRow;
@@ -376,7 +377,7 @@ namespace SpoServiceSystem.Windows
         }
         void RaschetItogov()
         {
-            uchPlanGroup.StringStatus = "Изменен";
+            //uchPlanGroup.StringStatus = "Изменен";
             ItogoItem1=0;
             ItogoItem2=0;
             ItogoItem3=0;
@@ -422,9 +423,14 @@ namespace SpoServiceSystem.Windows
                 ItogoItem19+=int.Parse(r["Item17"].ToString());
                 ItogoItem20+=int.Parse(r["Item18"].ToString());
                 ItogoItem21+=int.Parse(r["Itogo"].ToString());
-
+                
  
             }
+            if((datagrid.ItemsSource as DataView).Table.GetChanges()!= null)
+                uchPlanGroup.StringStatus = "Изменен";
+            else
+                uchPlanGroup.StringStatus = "Норма";
+
         }
 
       

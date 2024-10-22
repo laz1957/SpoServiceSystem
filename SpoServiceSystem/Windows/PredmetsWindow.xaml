@@ -47,10 +47,11 @@
            Foreground="Maroon" 
            FontWeight="Bold"
            FontSize="24"
+           Margin="20,0,0,0"
            VerticalAlignment="Center"
            HorizontalAlignment="Left"/>
             <StackPanel Orientation="Horizontal"  DockPanel.Dock="Right">
-                <TextBlock Text="Фильтры:" Margin="10,0,10,0"  VerticalAlignment="Center"></TextBlock>
+                <TextBlock Text="Фильтры:" Margin="20,0,5,0"  VerticalAlignment="Center"></TextBlock>
                 <ComboBox x:Name="cpecialnostCB" HorizontalAlignment="Right"
                           Width="200" Height="24" Margin="10,0,0,0"
                           ItemsSource="{Binding Source={StaticResource spec_table}}"

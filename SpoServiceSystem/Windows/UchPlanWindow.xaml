@@ -63,7 +63,7 @@
             <TextBlock   DockPanel.Dock="Right" Margin="0,0,10,0"
                  Text="{Binding RelativeSource={RelativeSource FindAncestor,
                         AncestorType={x:Type local:UchPlanWindow} },
-                        Path=uchPlanGroup.StringStatus,
+                        Path=uchPlanGroup.StringStatus,Mode=TwoWay,
                         UpdateSourceTrigger=PropertyChanged}"
                 VerticalAlignment="Center"
                  Foreground="Maroon" 
