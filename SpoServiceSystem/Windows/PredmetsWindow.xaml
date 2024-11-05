@@ -60,8 +60,8 @@
                             SelectionChanged="cpecialnostCB_SelectionChanged"   
                           >
 
-                </ComboBox>
-                <Button x:Name="ClearBtn1" Width="40" Height="24" Click="ClearBtn1_Click">X</Button>  
+                </ComboBox> 
+               <Button x:Name="ClearBtn1" Width="40" Height="24" Click="ClearBtn1_Click">X</Button>  
                 <ComboBox x:Name="kursCB" HorizontalAlignment="Right"
                           Width="100" Height="24" Margin="10,0,0,0"
                           ItemsSource="{Binding Source={StaticResource kurses}}"
@@ -91,6 +91,7 @@
             </DataGrid.RowStyle>
 
             <DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="№" Binding="{Binding Path=Number}" IsReadOnly="True"/>
                 <DataGridTextColumn IsReadOnly="True" Header="Код " Binding="{Binding Path=id_pr}"/>
                 <DataGridTextColumn Width="0.2*"  Header="Индекс" Binding="{Binding Path=index_pr}"/>
                 <DataGridTextColumn Width="*"  Header="Название Предмета" Binding="{Binding Path=name_pr}"/>

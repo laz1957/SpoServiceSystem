@@ -1,4 +1,5 @@
 ﻿using SpoServiceSystem.Controls;
+using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,14 +18,60 @@ namespace SpoServiceSystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        string SystemVersion {  get; set; }
         public MainWindow()
         {
             InitializeComponent();
-            
+            this.Loaded+=MainWindow_Loaded;
+            this.SizeChanged+=MainWindow_SizeChanged;
+            SystemVersion = GetSystemVersion("SpoServiceSystem");
+            tb01.Text = string.Format("Система контроля учебной нагрузки КАИТ № 20 (Версия {0})", SystemVersion);
+
         }
 
+        private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+           /*
+            Canvas.SetLeft(tb01, mainWindow.ActualWidth-400);
+            Canvas.SetTop(tb01, topcomtent.ActualHeight-60);
+            Canvas.SetLeft(imgKait, mainWindow.ActualWidth-130);
+            Canvas.SetTop(imgKait, topcomtent.ActualHeight-200);
+*/
+            SetLogotip(canvas);
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            
+            base.OnRender(drawingContext);
+            topcomtent.Height
+                = mainWindow.ActualHeight-rowtop.ActualHeight-rowfutter.ActualHeight;
+            rowcontext.Height = new GridLength(topcomtent.Height);
+            canvas.Height = topcomtent.Height;
+            canvas.Width = mainWindow.ActualWidth;
+
+        }
+      
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            //  tb01.SetValue(Canvas.TopProperty, 500);
+            //  tb01.SetValue(Canvas.LeftProperty, 500);
+            canvas.Height=topcomtent.ActualHeight;
+            SetLogotip(canvas);
+            // Canvas.SetLeft(imgKait, 10);
+            //  Canvas.SetTop(imgKait, 10);
+        }
+        void SetLogotip(Canvas canvas)
+        {
+            Canvas.SetLeft(tb01, canvas.ActualWidth-400);
+            Canvas.SetTop(tb01, canvas.ActualHeight-60);
+            Canvas.SetLeft(imgKait, canvas.ActualWidth-130);
+            Canvas.SetTop(imgKait, canvas.ActualHeight-200);
+        }
         private void CommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
+
           
         }
 
@@ -36,6 +83,12 @@ namespace SpoServiceSystem
             {
                 mainWindowGrid.Children.Remove(fe as UIElement);
                 mainWindowGrid.UnregisterName("allGroupsViewControl");
+            }
+            fe = mainWindowGrid.FindName("AllPrepodsUC");
+            if (fe != null)
+            {
+                mainWindowGrid.Children.Remove(fe as UIElement);
+                mainWindowGrid.UnregisterName("AllPrepodsUC");
             }
             switch (e.Parameter.ToString())
             {
@@ -89,6 +142,21 @@ namespace SpoServiceSystem
                     mainWindowGrid.Children.Add(aguc);
                     mainWindowGrid.RegisterName("allGroupsViewControl", aguc);
                     break;
+                case "ALLPREPODS":
+                    SpoServiceSystem.Controls.AllPrepodsUserControl allprep = new Controls.AllPrepodsUserControl();
+
+                   
+                   
+                   
+
+
+                    allprep.SetValue(Grid.RowProperty, 1);
+                    mainWindowGrid.Children.Add(allprep);
+                    mainWindowGrid.RegisterName(allprep.Name, allprep);
+                    break;
+                case "EXIT":
+                    this.Close();
+                    break;
             }
 
 
@@ -96,5 +164,25 @@ namespace SpoServiceSystem
 
             
         }
+
+        string GetSystemVersion(string filename)
+        {
+            string strversion = string.Empty;
+            Assembly[] myAssemblies = Thread.GetDomain().GetAssemblies();
+
+            foreach (Assembly assembly in myAssemblies) 
+            {
+                string fullname = assembly.FullName;
+                if(fullname.IndexOf(filename)!=-1)
+                {
+                    string[] array = fullname.Split(',');
+                    string[] array1 = array[1].Split('=');
+                    return array1[1].Trim();
+                }
+            }
+
+            return strversion;
+        }
+
     }
 }

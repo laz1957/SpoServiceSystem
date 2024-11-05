@@ -6,15 +6,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls.Ribbon;
+//using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
 using SpoServiceSystem.Classes;
+using SpoServiceSystem.Controls;
+using SpoServiceSystem.Windows;
 
 namespace SpoServiceSystem.DataModels
 {
     public class BazaSoft
     {
         string shablonStrConnection = "Server={0};Database={1};Uid={2};Pwd={3};";
-        string MySqlServerName = "localhost";
+        string MySqlServerName = "192.168.7.243";
         string MySqlDataBaze = "KAIT20";
         string MySqlPassword = "ski150357";
         string MySqlUserName = "root";
@@ -30,9 +33,13 @@ namespace SpoServiceSystem.DataModels
 
         public BazaSoft() {
             SystemSettings ss = new SystemSettings();
-            string server = ss.MySqlServerName;
+            MySqlServerName = ss.MySqlServerName;
+            MySqlDataBaze = ss.MySqlDataBaze;
+            MySqlUserName = ss.MySqlUserName;
+            MySqlPassword =ss.MySqlPassword;
+            shablonStrConnection = ss.TemplateStrConnection;
         }
-
+         
         public DataView getDataTableView(string _TableName)
         {
             TableName = _TableName;
@@ -50,7 +57,8 @@ namespace SpoServiceSystem.DataModels
             TableName =_TableName;
             DataTable dt;
             string sql = string.Format("SELECT * FROM {0}", TableName);
-            dt = getTable(sql);
+            //  dt = getTable(sql);
+            dt = getTable_AvtoIncriment(sql);
             return dt;
         }
         public  DataTable getTable(string sqlString)
@@ -70,7 +78,10 @@ namespace SpoServiceSystem.DataModels
                 }
                 catch (Exception e)
                 {
+                    
                     dt = null;
+                    System.Windows.MessageBox.Show(e.Message+Environment.NewLine+sqlString);
+                    
                 }
 
             }
@@ -105,12 +116,83 @@ namespace SpoServiceSystem.DataModels
                 catch (Exception e)
                 {
                     dt = null;
+                    System.Windows.MessageBox.Show(e.Message+Environment.NewLine+sqlString);
                 }
 
             }
 
             return dt;
         }
+
+        public DataTable getTableFromPprocedure(string sqlString)
+        {
+
+            DataTable? dt = new DataTable();
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(sqlString, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    conn.Open();
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                    conn.Close();
+                }
+                catch (Exception e)
+                {
+                    dt = null;
+                    System.Windows.MessageBox.Show(e.Message + Environment.NewLine + sqlString );
+                }
+
+            }
+            return dt;
+        }
+        public DataTable getTableFromPprocedure(string sqlString,int id)
+        {
+
+            DataTable? dt = new DataTable();
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(sqlString, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("id", id);
+                    conn.Open();
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                    conn.Close();
+
+                }
+                catch (Exception e)
+                {
+                    dt = null;
+                }
+
+            }
+
+            return dt;
+        }
+
         public int SaveSpecialnost(DataTable dtable)
         {
             int n = -1;
@@ -181,7 +263,7 @@ namespace SpoServiceSystem.DataModels
                                   "name_kf=@name_kf,name_kurz=@name_kurz" +
                                 " WHERE id_kf=@id_kf";
             string InsertString = "INSERT INTO kvalifications (name_kf,name_kurz)" +
-                                   "VALUES(@id_sp,@name_kf,@name_kurz)";
+                                   "VALUES(@name_kf,@name_kurz)";
             string DeleteString = "DELETE FROM kvalifications WHERE id_kf=@id_kf";
 
 
@@ -236,10 +318,10 @@ namespace SpoServiceSystem.DataModels
             int n = -1;
             string TableName = "prepods";
             string UpdateString = "UPDATE  prepods SET " +
-                                  "id_kategoria=@id_kategoria,name=@name,fam=@fam,otch=@otch" +
+                                  "id_uo=@id_uo,id_kategoria=@id_kategoria,name=@name,fam=@fam,otch=@otch" +
                                 " WHERE id_prepod=@id_prepod";
-            string InsertString = "INSERT INTO prepods (id_kategoria,name,fam,otch)" +
-                                   "VALUES(@id_kategoria,@name,@fam,@otch)";
+            string InsertString = "INSERT INTO prepods (id_uo,id_kategoria,name,fam,otch)" +
+                                   "VALUES(@id_uo,@id_kategoria,@name,@fam,@otch)";
             string DeleteString = "DELETE FROM prepods WHERE id_prepod=@id_prepod";
 
 
@@ -257,6 +339,7 @@ namespace SpoServiceSystem.DataModels
                         MySqlCommand com = new MySqlCommand(UpdateString, conn);
 
                         com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_prepod");
+                        com.Parameters.Add("@id_uo", MySqlDbType.Int32, 32, "id_uo");
                         com.Parameters.Add("@id_kategoria", MySqlDbType.Int32, 32, "id_kategoria");
                         com.Parameters.Add("@name", MySqlDbType.VarChar, 45, "name");
                         com.Parameters.Add("@fam", MySqlDbType.VarChar, 45, "fam");
@@ -265,6 +348,7 @@ namespace SpoServiceSystem.DataModels
                         adapter.UpdateCommand = com;
 
                         com = new MySqlCommand(InsertString, conn);
+                        com.Parameters.Add("@id_uo", MySqlDbType.Int32, 32, "id_uo");
                         com.Parameters.Add("@id_kategoria", MySqlDbType.Int32, 32, "id_kategoria");
                         com.Parameters.Add("@name", MySqlDbType.VarChar, 45, "name");
                         com.Parameters.Add("@fam", MySqlDbType.VarChar, 45, "fam");
@@ -272,7 +356,7 @@ namespace SpoServiceSystem.DataModels
                         adapter.InsertCommand = com;
 
                         com = new MySqlCommand(DeleteString, conn);
-                        com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_sp");
+                        com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_prepod");
                         adapter.DeleteCommand = com;
 
                         n = adapter.Update(dt);
@@ -285,6 +369,7 @@ namespace SpoServiceSystem.DataModels
             catch (Exception ex)
             {
                 string str = ex.Message;
+                System.Windows.MessageBox.Show(ex.Message + Environment.NewLine+" function SavePrepods error");
             }
             return n;
         }
@@ -350,6 +435,7 @@ namespace SpoServiceSystem.DataModels
             catch (Exception ex)
             {
                 string str = ex.Message;
+                System.Windows.MessageBox.Show(ex.Message + Environment.NewLine+" function SaveGroups error");
             }
             return n;
         }
@@ -408,6 +494,8 @@ namespace SpoServiceSystem.DataModels
             catch (Exception ex)
             {
                 string str = ex.Message;
+                System.Windows.MessageBox.Show(ex.Message + Environment.NewLine+" function SavePredmets error");
+
             }
             return n;
         }
@@ -462,6 +550,7 @@ namespace SpoServiceSystem.DataModels
             catch (Exception ex)
             {
                 string str = ex.Message;
+                System.Windows.MessageBox.Show(str + Environment.NewLine+" function SaveUchOtdelenies error");
             }
             return n;
         }
@@ -501,6 +590,7 @@ namespace SpoServiceSystem.DataModels
                 }
                 catch (Exception e)
                 {
+                    System.Windows.MessageBox.Show(e.Message + Environment.NewLine+" function GetUchPlanDataView error");
                     return null;
                 }
                 
@@ -685,7 +775,9 @@ namespace SpoServiceSystem.DataModels
                 }
                 catch (Exception e)
                 {
+                    System.Windows.MessageBox.Show(e.Message + Environment.NewLine);
                     return null;
+
                 }
 
 

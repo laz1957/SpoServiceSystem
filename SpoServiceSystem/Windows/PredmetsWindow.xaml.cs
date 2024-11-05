@@ -1,4 +1,5 @@
-﻿using SpoServiceSystem.DataModels;
+﻿using SpoServiceSystem.Classes;
+using SpoServiceSystem.DataModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -64,6 +65,8 @@ namespace SpoServiceSystem.Windows
                 int n = (TopGrid.DataContext as DataModels.BazaSoft).SavePredmets(dt);
                 if (n > 0)
                 {
+                    dt.AcceptChanges();
+                    WpfServises.SetNewAutoIncrementData(dt);
                     dt.AcceptChanges();
                 }
             }

@@ -333,6 +333,7 @@ namespace SpoServiceSystem.DataModels
     {
         int id_prepod;
         int id_kategoria;
+        int id_uo;
         string name = "";
         string fam = "";
         string otch = "";
@@ -356,6 +357,19 @@ namespace SpoServiceSystem.DataModels
                 if (id_kategoria != value)
                 {
                     id_kategoria = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public int Id_uo
+        {
+            get => id_uo;
+            set
+            {
+                if (id_uo != value)
+                {
+                    id_uo = value;
                     OnPropertyChanged();
                 }
             }
@@ -405,9 +419,9 @@ namespace SpoServiceSystem.DataModels
         {
             
         }
-        public Prepod(int _id,int _id_k, string _fam, string _name, string _otch)
+        public Prepod(int _id,int _id_k, int _id_uo, string _fam, string _name, string _otch)
         {
-            id_prepod = _id; id_kategoria = _id_k;
+            id_prepod = _id; id_kategoria = _id_k; id_uo = _id_uo;
             fam = _fam;name = _name; otch=_otch;
         }
         
@@ -433,13 +447,31 @@ namespace SpoServiceSystem.DataModels
             if (dt != null)
                 foreach (DataRow dr in dt.Rows)
                 {
-                    Prepod pers = new Prepod(dr.Field<int>("id_prepod"),
-                                                         dr.Field<int>("id_kategoria"),
-                                                         dr.Field<string>("fam"),
-                                                         dr.Field<string>("name"),
-                                                         dr.Field<string>("otch")
-                                                         );
-                    this.Add(pers);
+                    try
+                    {
+                        int id_uo=0;
+                        int id_prepod = int.Parse(dr["id_prepod"].ToString());
+                        int id_kategoria =int.Parse(dr["id_kategoria"].ToString());
+                        if (!dr.IsNull("id_uo"))
+                            id_uo = int.Parse(dr["id_uo"].ToString());
+                        string fam = dr["fam"].ToString();
+                        string name = dr["name"].ToString();
+                        string otch = dr["otch"].ToString();
+
+                        Prepod pers = new Prepod(id_prepod, id_kategoria, id_uo, fam, name, otch);
+                        /*
+                        Prepod pers = new Prepod(dr.Field<int>("id_prepod"),
+                                                             dr.Field<int>("id_kategoria"),
+                                                             dr.Field<string>("fam"),
+                                                             dr.Field<string>("name"),
+                                                             dr.Field<string>("otch")
+                                                             );
+                        */
+                        this.Add(pers);
+                    }
+                    catch {
+                        continue;
+                    }
 
                 }
 

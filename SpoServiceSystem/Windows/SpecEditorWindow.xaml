@@ -67,9 +67,16 @@
             </DataGrid.RowStyle>
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="№" Binding="{Binding Path=Number}" IsReadOnly="True" Width="50"/>
                 <DataGridTextColumn Header="Код специальности" Binding="{Binding Path=cod_sp}" Width="120" />
 
-                <DataGridTextColumn Width="*"  Header="Название специальности" Binding="{Binding Path=name_sp}"/>
+                <DataGridTextColumn Width="*"  Header="Название специальности" Binding="{Binding Path=name_sp}">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="TextWrapping" Value="Wrap" />
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>  
+                </DataGridTextColumn>
                 <DataGridComboBoxColumn Header="Квалификация" Width="0.4*"
                                         ItemsSource="{Binding Source={StaticResource kf_table}}"
                                         DisplayMemberPath="name_kf"

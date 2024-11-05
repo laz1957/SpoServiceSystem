@@ -8,6 +8,7 @@ using System.Windows;
 using System.Collections;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Data;
 
 namespace SpoServiceSystem.Classes
 {
@@ -112,5 +113,17 @@ namespace SpoServiceSystem.Classes
             }
         }
 
+
+        public static void SetNewAutoIncrementData(DataTable dt)
+        {
+            if (dt.Columns.IndexOf("Number")!=-1)
+            {
+                int count = 0;  
+                foreach (DataRow row in dt.Rows)
+                {
+                    row["Number"] = ++count;
+                }
+            }
+        }
     }
 }

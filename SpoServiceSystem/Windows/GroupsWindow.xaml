@@ -8,7 +8,7 @@
          xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
          xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
-        Title="GroupsWindow" Height="450" Width="900">
+        Title="GroupsWindow" Height="700" Width="1200">
     <Window.Resources>
         
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
@@ -50,14 +50,35 @@
                 <Button  x:Name="delBtn" Width="100" Click="delBtn_Click">Delete</Button>
                 <Button  x:Name="exitBtn" Width="100" Click="exitBtn_Click">Выход</Button>
             </DockPanel>
-            <DockPanel Grid.Row="0" Background="LightBlue">
+            <DockPanel Grid.Row="0" Background="LightBlue" LastChildFill="False">
                 <TextBlock Text="Справочник: Учебные группы" 
+                           Margin="20,0,0,0"
                    Foreground="Maroon" 
                    FontWeight="Bold"
                    FontSize="24"
+                   DockPanel.Dock="Left"
                    VerticalAlignment="Center"
-                   HorizontalAlignment="Center"/>   
-            </DockPanel>
+                   HorizontalAlignment="Center"/>
+            <TextBlock Text="Отделение:" VerticalAlignment="Center" Margin="20,0,5,0"/>
+            <ComboBox x:Name="otdCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+                      SelectionChanged="otdCB_SelectionChanged"
+                      DisplayMemberPath="Name" SelectedValuePath="Id"/>
+           
+            <Button x:Name="ClearOtdFilter" Width="24" Height="24" Click="ClearOtdFilter_Click">X</Button>
+            <TextBlock Text="Специальность:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+            <ComboBox x:Name="specCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource listSpecialnost}}"
+                      SelectionChanged="specCB_SelectionChanged"    
+          DisplayMemberPath="FullName" SelectedValuePath="Id"/>
+            <Button x:Name="ClearSpecFilter" Width="24" Height="24" Click="ClearSpecFilter_Click">X</Button>
+            <TextBlock Text="Тип обучения:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+            <ComboBox x:Name="tipCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource tip_obuch_table}}"
+                      SelectionChanged="tipCB_SelectionChanged"
+                    DisplayMemberPath="name_tip" SelectedValuePath="id_tip"/>
+            <Button x:Name="ClearTipFilter" Width="24" Height="24" Click="ClearTipFilter_Click">X</Button>
+        </DockPanel>
         <DataGrid Grid.Row="1" x:Name="datagrid"
           ItemsSource="{Binding Source={StaticResource table}}" 
           AutoGenerateColumns="False"
@@ -74,6 +95,7 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="№" Binding="{Binding Path=Number}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Код группы" Binding="{Binding Path=id_group}" Width="60"/>
                 <DataGridTextColumn Width="0.3*"  Header="Название группы" Binding="{Binding Path=name_group}"/>
 

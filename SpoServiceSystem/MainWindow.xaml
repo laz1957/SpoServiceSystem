@@ -4,27 +4,33 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoServiceSystem"
-        mc:Ignorable="d"
+        mc:Ignorable="d" x:Name="mainWindow"
         Icon="pack://application:,,,/ImageLib;component/Resources/images12.jpg"
-        Title="Главное окно программы" Height="800" Width="900">
+        Title="Главное окно программы" Height="700" Width="900">
     <Window.CommandBindings>
 
         <CommandBinding  Command = "Zoom"   CanExecute="CommandBinding_CanExecute"         Executed="CommandBinding_Executed" />
        
     </Window.CommandBindings>
-    <Grid x:Name="mainWindowGrid">
+    <Grid x:Name="mainWindowGrid" 
+          Width="{Binding ElementName=mainWindow, Path=ActualWidth}"
+          Height="{Binding ElementName=mainWindow, Path=ActualHeight}">
+        <!--
         <Grid.Background>
+          
             <ImageBrush ImageSource="pack://application:,,,/ImageLib;component/Resources/c2347652f225ce2ee19ccec86b963766.jpg" />
+           
         </Grid.Background>
+         -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition/>
-            <RowDefinition Height="30" />
+            <RowDefinition x:Name="rowtop" Height="30"/>
+            <RowDefinition x:Name="rowcontext" Height="*"/>
+            <RowDefinition x:Name="rowfutter" Height="30" />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="2" Background="{Binding Source={StaticResource NormalBrush}}">
+        <DockPanel Grid.Row="2" Background="{Binding Source={StaticResource  NormalBrush}}">
             
         </DockPanel>
-        <DockPanel>
+        
             <Menu  DockPanel.Dock = "Top"   >
                
                 <MenuItem Header="Справочники">
@@ -92,8 +98,17 @@
                             <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                         </MenuItem.CommandBindings>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="Выход" Command="Zoom"  CommandParameter="EXIT">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Учебные группы" Command="Zoom"  CommandParameter="UGR">
+                <MenuItem Header="Учебные планы" Command="Zoom"  CommandParameter="UGR">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
                     </MenuItem.Icon>
@@ -102,9 +117,15 @@
                             <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                         </MenuItem.CommandBindings>
                     </MenuItem>
- 
 
-
+                <MenuItem Header="Преподаватели" Command="Zoom"  CommandParameter="ALLPREPODS">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-x-troff-man.png" Height="36" />
+                    </MenuItem.Icon>
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                    </MenuItem.CommandBindings>
+                </MenuItem>
                 <MenuItem Header="Настройки приложения">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-x-troff-man.png
@@ -121,6 +142,17 @@
                 </MenuItem>
 
             </Menu>
-        </DockPanel>
+
+        <StackPanel x:Name="topcomtent" Grid.Row="1" Height="{Binding  ElementName=rowcontext, Path=ActualHeight}">
+            <Canvas Background="Silver" x:Name="canvas"
+                    Width="{Binding ElementName=mainWindow, Path=ActualWidth}"
+                    Height="{Binding  ElementName=topcomtent, Path=ActualHeight}">
+               
+                <Image x:Name="imgKait" Canvas.Top="100" Canvas.Left="100" Width="100"
+                       Source="pack://application:,,,/SpoServiceSystem;component/img/kait20.png"></Image>
+            <TextBlock x:Name="tb01" Text="Система контроля учебной нагрузки КАИТ № 20 (Версия 01.05.02)"></TextBlock>
+            </Canvas>
+
+        </StackPanel>
     </Grid>
 </Window>

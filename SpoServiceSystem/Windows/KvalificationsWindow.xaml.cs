@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpoServiceSystem.Classes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace SpoServiceSystem.Windows
             // DataRowView drw =  (datagrid.ItemsSource as DataView).AddNew();
             //   drw.Row[2] = "новая";
             DataRow dr = (datagrid.ItemsSource as DataView).Table.NewRow();
-            dr[2]="Новая";
+            dr["name_kf"]="Новая";
             (datagrid.ItemsSource as DataView).Table.Rows.Add(dr);
         }
 
@@ -61,6 +62,9 @@ namespace SpoServiceSystem.Windows
               if(ncount > 0)
                 {
                     dt.AcceptChanges();
+                    WpfServises.SetNewAutoIncrementData(dt);
+                    dt.AcceptChanges();
+                   
                 }
             }
         }

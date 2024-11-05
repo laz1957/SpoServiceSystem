@@ -13,6 +13,7 @@
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
         <data:BazaSoft x:Key="basatable"></data:BazaSoft>
         <data:Kantgories x:Key="kantgories"/>
+        <data:ListOtdelenie x:Key="listOtdelenie"/>
         <ObjectDataProvider  x:Key="table" 
                              ObjectType="{x:Type data:BazaSoft}"
                              MethodName="getDataTableView" >
@@ -35,13 +36,24 @@
                 <Button  x:Name="delBtn" Width="100" Click="delBtn_Click">Delete</Button>
                 <Button  x:Name="exitBtn" Width="100" Click="exitBtn_Click">Выход</Button>
             </DockPanel>
-            <DockPanel Grid.Row="0" Background="LightBlue">
-            <TextBlock Text="Справочник: Преподаватели" 
+            <DockPanel Grid.Row="0" Background="LightBlue" LastChildFill="False">
+            <TextBlock Text="Справочник: Преподаватели"  
                  Foreground="Maroon" 
                  FontWeight="Bold"
                  FontSize="24"
+                       Margin="20,0,0,0"
                  VerticalAlignment="Center"
-                 HorizontalAlignment="Center"/> 
+                 HorizontalAlignment="Left"/>
+            <Button x:Name="ClearBtn1" Width="40" Height="24" Margin="0,0,10,0"
+                    DockPanel.Dock="Right" Click="ClearBtn1_Click">X</Button>
+            <ComboBox x:Name="otdelenieCB" 
+          Width="200" Height="24" Margin="10,0,0,0" DockPanel.Dock="Right"
+          ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+            DisplayMemberPath="Name"
+            SelectedValuePath="Id"
+            SelectionChanged="otdelenieCB_SelectionChanged"    
+          />
+            <TextBlock Text="Фильтр:" VerticalAlignment="Center" DockPanel.Dock="Right"/>      
         </DockPanel>
         <DataGrid Grid.Row="1" x:Name="datagrid"
           ItemsSource="{Binding Source={StaticResource table}}" 
@@ -53,14 +65,20 @@
             </DataGrid.ColumnHeaderStyle>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
-                    <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}}"/>
+                    <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}, UpdateSourceTrigger=PropertyChanged}"/>
                 </Style>
             </DataGrid.RowStyle>
 
 
             <DataGrid.Columns>
+                <DataGridTextColumn Width="50" Header="№" Binding="{Binding Path=Number}" IsReadOnly="True"/>
                 <DataGridTextColumn Width="50" Header="Код" Binding="{Binding Path=id_prepod}" IsReadOnly="True"/>
-               
+                <DataGridComboBoxColumn Header="Отделение" Width="0.4*"
+                       ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+                       DisplayMemberPath="Name"
+                       SelectedValuePath="Id"
+                       SelectedValueBinding="{Binding Path=id_uo}" 
+                       />
                 <DataGridComboBoxColumn Header="Категория" Width="0.4*"
                                        ItemsSource="{Binding Source={StaticResource kantgories}}"
                                        DisplayMemberPath="Name"

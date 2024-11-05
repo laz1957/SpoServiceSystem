@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpoServiceSystem.Classes;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -29,7 +30,9 @@ namespace SpoServiceSystem.Windows
         {
             DataRow dr = (datagrid.ItemsSource as DataView).Table.NewRow();
             dr["fam"]="Новая";
-            (datagrid.ItemsSource as DataView).Table.Rows.Add(dr);
+            if (otdelenieCB.SelectedItem != null)
+                dr["id_uo"]= otdelenieCB.SelectedValue;
+           (datagrid.ItemsSource as DataView).Table.Rows.Add(dr);
         }
 
         private void saveBtn_Click(object sender, RoutedEventArgs e)
@@ -42,6 +45,8 @@ namespace SpoServiceSystem.Windows
                 int n = (TopGrid.DataContext as DataModels.BazaSoft).SavePrepods(dt);
                 if (n > 0)
                 {
+                    dt.AcceptChanges();
+                    WpfServises.SetNewAutoIncrementData(dt);
                     dt.AcceptChanges();
                 }
             }
@@ -68,6 +73,27 @@ namespace SpoServiceSystem.Windows
             }
             else
                 this.Close();
+        }
+
+        private void otdelenieCB_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SetFilterDataGrid();
+        }
+
+        void SetFilterDataGrid()
+        {
+            if (otdelenieCB.SelectedItem == null)
+                ((datagrid.ItemsSource) as DataView).RowFilter="";
+            if (otdelenieCB.SelectedItem != null)
+                ((datagrid.ItemsSource) as DataView).RowFilter=string.Format("id_uo={0}", otdelenieCB.SelectedValue); 
+
+
+
+        }
+
+        private void ClearBtn1_Click(object sender, RoutedEventArgs e)
+        {
+            otdelenieCB.SelectedItem = null;
         }
     }
 }

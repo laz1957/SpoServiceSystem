@@ -13,37 +13,37 @@ namespace SpoServiceSystem.Classes
         public string MySqlServerName
         {
             get { return (string)this["MySqlServerName"]; }
-            set { this["MySqlServerName"] = value; }
+            set { this["MySqlServerName"] = value; Save(); }
         }
         [UserScopedSetting, DefaultSettingValue("Server={0};Database={1};Uid={2};Pwd={3};")]
         public string TemplateStrConnection
         {
             get { return (string)this["TemplateStrConnection"]; }
-            set { this["TemplateStrConnection"] = value; }
+            set { this["TemplateStrConnection"] = value; Save(); }
         }
         [UserScopedSetting, DefaultSettingValue("KAIT20")]
         public string MySqlDataBaze
         {
             get { return (string)this["MySqlDataBaze"]; }
-            set { this["MySqlDataBaze"] = value; }
+            set { this["MySqlDataBaze"] = value; Save(); }
         }
         [UserScopedSetting, DefaultSettingValue("kait")]
         public string MySqlUserName
         {
             get { return (string)this["MySqlUserName"]; }
-            set { this["MySqlUserName"] = value; }
+            set { this["MySqlUserName"] = value; Save(); }
         }
         [UserScopedSetting, DefaultSettingValue("kait20_1m")]
         public string MySqlPassword
         {
             get { return (string)this["MySqlPassword"]; }
-            set { this["MySqlPassword"] = value; }
+            set { this["MySqlPassword"] = value; Save(); }
         }
         [UserScopedSetting, DefaultSettingValue("8080")]
         public int Port
         {
             get { return (int)this["Port"]; }
-            set { this["Port"] = value; }
+            set { this["Port"] = value; Save(); }
         }
 
     }

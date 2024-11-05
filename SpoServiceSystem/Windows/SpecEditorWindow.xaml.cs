@@ -1,4 +1,5 @@
 ﻿using Mysqlx.Crud;
+using SpoServiceSystem.Classes;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -54,6 +55,8 @@ namespace SpoServiceSystem.Windows
                int n = (TopGrid.DataContext as DataModels.BazaSoft).SaveSpecialnost(dt);
                if(n > 0 )
                 {
+                    dt.AcceptChanges();
+                    WpfServises.SetNewAutoIncrementData(dt);
                     dt.AcceptChanges();
                 }
             }
