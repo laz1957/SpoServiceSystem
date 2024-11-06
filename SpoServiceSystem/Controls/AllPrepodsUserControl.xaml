@@ -31,7 +31,7 @@
                 <ColumnDefinition x:Name="Column1" Width="*"></ColumnDefinition>
                 <ColumnDefinition x:Name="Column2"  Width="2.5*"/>
             </Grid.ColumnDefinitions>
-            <StackPanel Background="LightBlue" MouseLeftButtonDown="StackPanel_MouseLeftButtonDown">
+            <StackPanel x:Name="leftPanel" Background="LightBlue" MouseLeftButtonDown="StackPanel_MouseLeftButtonDown">
                 <StackPanel Height="30" Orientation="Horizontal" Background="{Binding Source={ StaticResource NormalBrush}}">
                     <TextBlock Text="Фильтр:" Margin="10,0,20,0" VerticalAlignment="Center"/>
                     <TextBox Width="120" Height="24" x:Name="FioFilterTxt"
@@ -39,9 +39,10 @@
                              ></TextBox>
                     <Button x:Name="sbrosFilterBtn" Width="30" Height="24" Click="sbrosFilterBtn_Click">X</Button>
                 </StackPanel>
-                
-                
-                <ListBox x:Name="PrepodsLB" SelectionChanged="PrepodsLB_SelectionChanged"   
+
+            
+                   <ListBox x:Name="PrepodsLB" SelectionChanged="PrepodsLB_SelectionChanged"   
+                        
                                  ItemsSource="{Binding Source={StaticResource listPrepodFullItog},IsAsync=True}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -94,7 +95,13 @@
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate >
+                            <StackPanel Orientation="Vertical" Height="600"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
                 </ListBox>
+               
             </StackPanel>
             <Grid Grid.Column="1" Background="Silver">
                 <Grid.RowDefinitions>

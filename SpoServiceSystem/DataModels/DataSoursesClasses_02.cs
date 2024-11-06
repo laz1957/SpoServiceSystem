@@ -134,9 +134,15 @@ namespace SpoServiceSystem.DataModels
         }
         public string Fio
         {
-            get => string.Format("{0} {1}.{2}", Fam,
+            get
+            {
+                if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Otch))
+                    return Fam;
+                else
+                 return string.Format("{0} {1}.{2}", Fam,
                                  Name.Substring(0, 1).ToUpper(),
                                  Otch.Substring(0, 1).ToUpper());
+            }
         }
     
       
@@ -172,15 +178,16 @@ namespace SpoServiceSystem.DataModels
                 PrepodFullItog item = new PrepodFullItog()
                 {
                     Id = int.Parse(row["id_prepod"].ToString()),
-                    Id_kategoria=int.Parse(row["id_kategoria"].ToString()),
-                    Id_uo = int.Parse(row["id_uo"].ToString()),
+                    Id_kategoria= row.IsNull("id_kategoria") ? 0 : int.Parse(row["id_kategoria"].ToString()),
+                    Id_uo =row.IsNull("id_uo") ? 0: int.Parse(row["id_uo"].ToString()),
                     Fam = row["fam"].ToString(),
                     Name = row["name"].ToString(),
                     Otch = row["otch"].ToString(),
-                    Itog = int.Parse(row["Itog"].ToString()),
-                    Itog1 = int.Parse(row["Itog1"].ToString()),
-                    Itog2 = int.Parse(row["Itog2"].ToString())
+                    Itog = row.IsNull("Itog") ? 0 : int.Parse(row["Itog"].ToString()),
+                    Itog1 =row.IsNull("Itog1") ? 0 : int.Parse(row["Itog1"].ToString()),
+                    Itog2 =row.IsNull("Itog2") ? 0 : int.Parse(row["Itog2"].ToString())
                 };
+
                 this.Add(item);
             }
         }

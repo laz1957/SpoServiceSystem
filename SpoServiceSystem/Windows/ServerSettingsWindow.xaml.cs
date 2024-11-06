@@ -19,9 +19,18 @@ namespace SpoServiceSystem.Windows
     /// </summary>
     public partial class ServerSettingsWindow : Window
     {
+
+        Classes.SystemSettings ServerSettings;
         public ServerSettingsWindow()
         {
             InitializeComponent();
+            ServerSettings = new Classes.SystemSettings();
+            pwbox.Password = ServerSettings.MySqlPassword;
+        }
+
+        private void pwbox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            ServerSettings.MySqlPassword = pwbox.Password;
         }
     }
 }

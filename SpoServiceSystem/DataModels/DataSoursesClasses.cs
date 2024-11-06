@@ -412,8 +412,14 @@ namespace SpoServiceSystem.DataModels
         }
         public string Fio
         {
-            get => string.Format("{0} {1}.{2}.", 
-                Fam, Name.Substring(0,1).ToUpper(),Otch.Substring(0, 1).ToUpper());
+            get
+            {
+                if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Otch))
+                    return Fam;
+                else
+                    return string.Format("{0} {1}.{2}.",
+                Fam, Name.Substring(0, 1).ToUpper(), Otch.Substring(0, 1).ToUpper());
+            }
         }
         public Prepod()
         {
@@ -451,12 +457,12 @@ namespace SpoServiceSystem.DataModels
                     {
                         int id_uo=0;
                         int id_prepod = int.Parse(dr["id_prepod"].ToString());
-                        int id_kategoria =int.Parse(dr["id_kategoria"].ToString());
+                        int id_kategoria = dr.IsNull("id_kategoria") ? 0 : int.Parse(dr["id_kategoria"].ToString());
                         if (!dr.IsNull("id_uo"))
                             id_uo = int.Parse(dr["id_uo"].ToString());
-                        string fam = dr["fam"].ToString();
-                        string name = dr["name"].ToString();
-                        string otch = dr["otch"].ToString();
+                        string fam = dr.IsNull("fam") ? "" : dr["fam"].ToString();
+                        string name = dr.IsNull("name") ? "" : dr["name"].ToString();
+                        string otch = dr.IsNull("otch") ? "" : dr["otch"].ToString();
 
                         Prepod pers = new Prepod(id_prepod, id_kategoria, id_uo, fam, name, otch);
                         /*

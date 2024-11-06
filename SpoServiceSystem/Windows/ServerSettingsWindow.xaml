@@ -39,6 +39,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
+            
         </controls:CustomGrid.RowDefinitions>
         <Border Background="LightBlue" BorderBrush="Black" BorderThickness="2">
              <TextBlock Grid.Column="0" Text="Название параметра"/>
@@ -74,8 +75,10 @@
             <TextBox  Text="{Binding Path=TemplateStrConnection}"/>
         </Border>
         <Border Grid.Row="5" Grid.Column="1"  BorderThickness="0,0,0,1" BorderBrush="Black">
-            <TextBox Text="{Binding Path=MySqlPassword}" />
-           
+            <PasswordBox x:Name="pwbox" Width="250" Height="36" VerticalAlignment="Center" HorizontalAlignment="Center"
+                         PasswordChanged="pwbox_PasswordChanged"></PasswordBox>
+
         </Border>
+       
     </controls:CustomGrid>
 </Window>
