@@ -6,12 +6,13 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <AssemblyVersion>1.0.0.9</AssemblyVersion>
-    <FileVersion>1.0.0.8</FileVersion>
+    <AssemblyVersion>2.0.3.4</AssemblyVersion>
+    <FileVersion>2.0.3.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Classes\ExcelManager_kopia.cs" />
+    <Compile Remove="Windows\UchPlanWindow - Копировать.xaml.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,10 +21,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Windows\UchPlanWindow - Копировать.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FreeSpire.XLS" Version="14.2.0" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
     <PackageReference Include="MicrosoftOfficeCore" Version="15.0.0" />
     <PackageReference Include="MySql.Data" Version="9.0.0" />
+    <PackageReference Include="MySqlBackup.NET" Version="2.3.8" />
   </ItemGroup>
 
   <ItemGroup>

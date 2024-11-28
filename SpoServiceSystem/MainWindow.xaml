@@ -4,13 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SpoServiceSystem"
+        xmlns:model ="clr-namespace:SpoServiceSystem.DataModels"
         mc:Ignorable="d" x:Name="mainWindow"
         Icon="pack://application:,,,/ImageLib;component/Resources/images12.jpg"
         Title="Главное окно программы" Height="700" Width="900">
+    <Window.Resources>
+        <model:Kurses x:Key="kurses" />
+        <model:ListSpecialnost x:Key="listSpecialnost" />
+        <CollectionViewSource x:Key="listSpecialnostWiew" Source="{Binding Source={StaticResource listSpecialnost}}" />
+    </Window.Resources>
     <Window.CommandBindings>
 
         <CommandBinding  Command = "Zoom"   CanExecute="CommandBinding_CanExecute"         Executed="CommandBinding_Executed" />
-       
+        <CommandBinding  Command = "{x:Static local:MainWindow.route_command}"   />
+
     </Window.CommandBindings>
     <Grid x:Name="mainWindowGrid" 
           Width="{Binding ElementName=mainWindow, Path=ActualWidth}"
@@ -108,7 +115,20 @@
                         </MenuItem.CommandBindings>
                     </MenuItem>
                 </MenuItem>
-                <MenuItem Header="Учебные планы" Command="Zoom"  CommandParameter="UGR">
+
+            <MenuItem Header="Учебные планы" Command="Zoom"  CommandParameter="UCHPLANS">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                </MenuItem.Icon>
+
+                <MenuItem.CommandBindings>
+                    <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                </MenuItem.CommandBindings>
+            </MenuItem>
+
+
+          
+                <MenuItem Header="Учебные группы" Command="Zoom"  CommandParameter="UGR">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
                     </MenuItem.Icon>
@@ -126,12 +146,31 @@
                         <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                     </MenuItem.CommandBindings>
                 </MenuItem>
-                <MenuItem Header="Настройки приложения">
+            <MenuItem Header="Просмотр">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                </MenuItem.Icon>
+                <Separator/>
+               
+                <MenuItem Header="Список учебных планов" Name="ListUP_MenuItem">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                    </MenuItem.Icon>
+
+                </MenuItem>
+                <MenuItem Header="Список учебных планов 2" Name="ListUP_MenuItem2">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+            </MenuItem>
+            <MenuItem Header="Настройки приложения">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-x-troff-man.png
-" Height="36" />
+                           " Height="36" />
                     </MenuItem.Icon>
-                    <MenuItem Header="Насиройки сервера базы данных" Command="Zoom"  CommandParameter="MYSQL">
+                    <MenuItem Header="Настройки сервера базы данных" Command="Zoom"  CommandParameter="MYSQL">
                         <MenuItem.Icon>
                             <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.database.png" Height="32" />
                         </MenuItem.Icon>
@@ -139,7 +178,23 @@
                             <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                         </MenuItem.CommandBindings>
                     </MenuItem>
+                    <MenuItem Header="Резервное копирование базы данных" Command="Zoom"  CommandParameter="BACKUPBD">
+                        <MenuItem.Icon>
+                            <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.database.png" Height="32" />
+                        </MenuItem.Icon>
+                        <MenuItem.CommandBindings>
+                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                        </MenuItem.CommandBindings>
+                    </MenuItem>
+                <MenuItem Header="Восстановление базы данных" Command="Zoom"  CommandParameter="RESTOREBD">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.database.png" Height="32" />
+                    </MenuItem.Icon>
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                    </MenuItem.CommandBindings>
                 </MenuItem>
+            </MenuItem>
 
             </Menu>
 
@@ -147,12 +202,12 @@
             <Canvas Background="Silver" x:Name="canvas"
                     Width="{Binding ElementName=mainWindow, Path=ActualWidth}"
                     Height="{Binding  ElementName=topcomtent, Path=ActualHeight}">
-               
+                <TextBlock x:Name="messageaTB" Text="" Canvas.Top="10" Canvas.Left="30" FontSize="24" Foreground="Maroon"></TextBlock>
                 <Image x:Name="imgKait" Canvas.Top="100" Canvas.Left="100" Width="100"
                        Source="pack://application:,,,/SpoServiceSystem;component/img/kait20.png"></Image>
             <TextBlock x:Name="tb01" Text="Система контроля учебной нагрузки КАИТ № 20 (Версия 01.05.02)"></TextBlock>
             </Canvas>
-
+           
         </StackPanel>
     </Grid>
 </Window>

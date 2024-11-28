@@ -36,4 +36,10 @@
         <GradientStop Color="LightBlue" Offset="0.5" />
         <GradientStop Color="White" Offset="1.0" />
     </LinearGradientBrush>
+    <LinearGradientBrush x:Key="VerticalBrush_1" StartPoint="0,0.5" EndPoint="1,0.5">
+        <GradientStop Color="White" Offset="0.0" />
+        <GradientStop Color="Pink" Offset="0.3" />
+        <GradientStop Color="Pink" Offset="0.5" />
+        <GradientStop Color="White" Offset="1.0" />
+    </LinearGradientBrush>
 </ResourceDictionary>

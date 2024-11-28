@@ -108,7 +108,11 @@ namespace SpoServiceSystem.DataModels
         }
     }
 
-    
+    public class KursSpecialnost
+    {
+        public Specialnost specialnost { get; set; }
+        public Kurs kurs { get; set; }
+    }
 
     public class Predmet : INotifyPropertyChanged
     {

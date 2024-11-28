@@ -1,0 +1,37 @@
+﻿<Window x:Class="SpoServiceSystem.Windows.AllKursesUchPlansWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpoServiceSystem.Windows"
+         xmlns:control="clr-namespace:SpoServiceSystem.Controls"
+         xmlns:model ="clr-namespace:SpoServiceSystem.DataModels"
+         xmlns:class ="clr-namespace:SpoServiceSystem.Classes"
+        mc:Ignorable="d"
+        Title="Учебные планы специальности" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34"/>
+            <RowDefinition Height="Auto"/>
+            
+        </Grid.RowDefinitions>
+      
+        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type local:AllKursesUchPlansWindow}}, Path=CurrentSpecialnost.FullName}"
+                   HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="Maroon"
+                   />
+        <TabControl x:Name="tabControl" Grid.Row="1">
+            <TabItem Header="Первый курс">
+                <control:DataGridUchebPlan x:Name="datagrid1"/>
+            </TabItem>
+            <TabItem Header="Второй курс">
+                <control:DataGridUchebPlan x:Name="datagrid2"/>
+            </TabItem>
+            <TabItem Header="Третий курс" >
+                <control:DataGridUchebPlan x:Name="datagrid3"/>
+            </TabItem>
+            <TabItem Header="Четвертый курс" >
+                <control:DataGridUchebPlan x:Name="datagrid4"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

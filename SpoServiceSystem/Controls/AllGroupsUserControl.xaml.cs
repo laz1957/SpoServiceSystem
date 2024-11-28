@@ -60,13 +60,17 @@ namespace SpoServiceSystem.Controls
               Predicate<Group> spec = (Group p) => { return true; };
               Predicate<Group> kurs = (Group p) => { return true; };
               Predicate<Group> otdelenie = (Group p) => { return true; };
+            Predicate<Group> yesPlab = (Group p) => { return true; };
             Predicate<Group>? fullfilter = (Group p) => { return true; }; ;
             Group gr = item as Group;
-            
+
+            if(yesRB.IsChecked.Value) yesPlab =new Predicate<Group>((g) => ((Group)g).groupPlanInfo.Count >0);
+            if (noRB.IsChecked.Value) yesPlab =new Predicate<Group>((g) => ((Group)g).groupPlanInfo.Count <=0);
+
             if ((specLB.SelectedItem != null)) spec = new Predicate<Group>((g) => ((Group)g).Id_sp ==(specLB.SelectedItem as Specialnost).Id);
             if(otdelenieLB.SelectedItem != null) otdelenie +=new Predicate<Group>((g) => ((Group)g).Id_uo ==(otdelenieLB.SelectedItem as Otdelenie).Id);
             if(kursLB.SelectedItem != null) kurs +=new Predicate<Group>((g) => ((Group)g).Kurs ==(kursLB.SelectedItem as Kurs).Id);
-            return spec(gr) && kurs(gr) && otdelenie(gr);
+            return spec(gr) && kurs(gr) && otdelenie(gr)&&yesPlab(gr);
 
 
 
@@ -123,16 +127,17 @@ namespace SpoServiceSystem.Controls
                 Group grpup = groupLB.SelectedItem as Group;
                 if (grpup != null)
                     {
-                        if (grpup.groupPlanInfo.Count==0)
-                        {
-                            OpenPlanBtn.Visibility = Visibility.Hidden;
-                            NewPlanBtn.Visibility= Visibility.Visible;
-                        }
-                        else
+                        if (grpup.groupPlanInfo.Count > 0)
                         {
                             OpenPlanBtn.Visibility = Visibility.Visible;
                             NewPlanBtn.Visibility= Visibility.Hidden;
                         }
+                        else
+                        {
+                            OpenPlanBtn.Visibility = Visibility.Hidden;
+                            NewPlanBtn.Visibility= Visibility.Hidden;
+                        }
+                  
                     }
             }
          
@@ -171,6 +176,7 @@ namespace SpoServiceSystem.Controls
             KvalificationCB.SelectedIndex = 0;
             kursLB.SelectedItem = null;
             otdelenieLB.SelectedItem = null;
+            allRB.IsChecked = true;
 
         }
 
@@ -194,14 +200,23 @@ namespace SpoServiceSystem.Controls
                 Group gr = (sender as FrameworkElement).DataContext as Group;
             if (gr != null)
             {
-                UchPlanGroup upg = new UchPlanGroup(gr);
-                upg.GetNewUchPlan();
-                UchPlanWindow upw = new UchPlanWindow(gr);
+                //UchPlanGroup upg = new UchPlanGroup(gr);
+                //upg.GetNewUchPlan();
+                UchPlanWindow upw = new UchPlanWindow(gr,1);
                 upw.Show();
 
             }
         }
 
-      
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (specLB != null)
+            {
+                CollectionViewSource.GetDefaultView(groupLB.ItemsSource).Refresh();
+                OpenPlanBtn.Visibility = Visibility.Hidden;
+                NewPlanBtn.Visibility= Visibility.Hidden;
+            }
+        
+        }
     }
 }

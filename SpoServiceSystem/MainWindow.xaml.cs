@@ -1,4 +1,9 @@
-﻿using SpoServiceSystem.Controls;
+﻿using Microsoft.Win32;
+using MySql.Data.MySqlClient;
+using SpoServiceSystem.Controls;
+using SpoServiceSystem.DataModels;
+using SpoServiceSystem.Windows;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using System.Windows;
@@ -10,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace SpoServiceSystem
 {
@@ -18,10 +24,16 @@ namespace SpoServiceSystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static RoutedCommand route_command = new RoutedCommand();
+        MessageWindow messageWindow;
         string SystemVersion {  get; set; }
+       
         public MainWindow()
         {
             InitializeComponent();
+            
+            GenerateMenuItemsUchPlanes(ListUP_MenuItem,0);
+            GenerateMenuItemsUchPlanes(ListUP_MenuItem2, 1);
             this.Loaded+=MainWindow_Loaded;
             this.SizeChanged+=MainWindow_SizeChanged;
             SystemVersion = GetSystemVersion("SpoServiceSystem");
@@ -90,6 +102,12 @@ namespace SpoServiceSystem
                 mainWindowGrid.Children.Remove(fe as UIElement);
                 mainWindowGrid.UnregisterName("AllPrepodsUC");
             }
+            fe = mainWindowGrid.FindName("uchPlansUserControl");
+            if (fe != null)
+            {
+                mainWindowGrid.Children.Remove(fe as UIElement);
+                mainWindowGrid.UnregisterName("uchPlansUserControl");
+            }
             switch (e.Parameter.ToString())
             {
                 case "KF":
@@ -118,8 +136,9 @@ namespace SpoServiceSystem
                     winPO.Show();
                     break;
                 case "SHUP":
-                    SpoServiceSystem.Windows.ShablonPlanWindow winSHUP = new SpoServiceSystem.Windows.ShablonPlanWindow();
-                    winSHUP.Show();
+                    //  SpoServiceSystem.Windows.ShablonPlanWindow winSHUP = new SpoServiceSystem.Windows.ShablonPlanWindow();
+                    //  winSHUP.Show();
+                    MessageBox.Show("Операция временно заблокирована!");
                     break;
                 case "MYSQL":
                    // SpoServiceSystem.Windows.UchPlanWindow winNUPL = new SpoServiceSystem.Windows.UchPlanWindow();
@@ -134,25 +153,39 @@ namespace SpoServiceSystem
 
                     break;
                 case "UGR":
+                     messageWindow = new MessageWindow("Загрузка данных! Ждите...");
+                     messageWindow.Show();
+
+                    BackgroundWorker bgWorker = new BackgroundWorker();
+                    bgWorker.DoWork+=BgWorker_DoWork;
+                    bgWorker.RunWorkerCompleted+=BgWorker_RunWorkerCompleted;
+                    bgWorker.RunWorkerAsync();
                     SpoServiceSystem.Controls.AllGroupsUserControl aguc = new Controls.AllGroupsUserControl();
+                    aguc.Loaded+=Aguc_Loaded;
                     aguc.Name="allGroupsViewControl";
-                    // =this.Content = aguc;
-                    //mainWindowGrid.Background=null;
                     aguc.SetValue(Grid.RowProperty, 1);
                     mainWindowGrid.Children.Add(aguc);
                     mainWindowGrid.RegisterName("allGroupsViewControl", aguc);
+
                     break;
                 case "ALLPREPODS":
                     SpoServiceSystem.Controls.AllPrepodsUserControl allprep = new Controls.AllPrepodsUserControl();
-
-                   
-                   
-                   
-
-
                     allprep.SetValue(Grid.RowProperty, 1);
                     mainWindowGrid.Children.Add(allprep);
                     mainWindowGrid.RegisterName(allprep.Name, allprep);
+                    break;
+                case "UCHPLANS":
+                    Controls.UchPlansUserControl upControl = new UchPlansUserControl();
+                    upControl.SetValue(Grid.RowProperty, 1);
+                    mainWindowGrid.Children.Add(upControl);
+                    mainWindowGrid.RegisterName(upControl.Name, upControl);
+                    break;
+                case "BACKUPBD":
+                    // MessageBox.Show("Раздел в стадии разработки !!!");
+                    BackupBasaToFile();
+                    break;
+                case "RESTOREBD":
+                    MessageBox.Show("Раздел в стадии разработки !!!");
                     break;
                 case "EXIT":
                     this.Close();
@@ -163,6 +196,25 @@ namespace SpoServiceSystem
 
 
             
+        }
+
+        private void BgWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            
+        }
+
+        private void BgWorker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+        
+            
+           
+        }
+
+        private void Aguc_Loaded(object sender, RoutedEventArgs e)
+        {
+              messageWindow.Close();
+            messageaTB.Text="";
+
         }
 
         string GetSystemVersion(string filename)
@@ -184,5 +236,145 @@ namespace SpoServiceSystem
             return strversion;
         }
 
+
+        void GenerateMenuItemsUchPlanes(MenuItem targetMenuItem,int variant)
+        {
+            DataModels.ListSpecialnost listSP = new DataModels.ListSpecialnost();
+            DataModels.Kurses listKurses = new DataModels.Kurses();
+
+            foreach(DataModels.Specialnost specialnost in listSP) {
+                MenuItem menuItem = new MenuItem();
+                menuItem.Header=specialnost.FullName;
+                if (variant==0)
+                    foreach (DataModels.Kurs kurs in listKurses)
+                    {
+                        MenuItem mItem = new MenuItem();
+                        mItem.Header=kurs.Name;
+                        DataModels.KursSpecialnost ks = new DataModels.KursSpecialnost();
+                        ks.kurs = kurs;
+                        ks.specialnost = specialnost;
+                        mItem.DataContext = ks;
+                        mItem.Click += MItem_Click;
+                        menuItem.Items.Add(mItem);
+                    }
+                else
+                {
+                    menuItem.Click +=MenuItem_Click;
+                    menuItem.DataContext=specialnost;
+                }
+
+                targetMenuItem.Items.Add(menuItem);
+
+            }
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            DataModels.Specialnost spec = (sender as FrameworkElement).DataContext as DataModels.Specialnost;   
+            AllKursesUchPlansWindow window = new AllKursesUchPlansWindow(spec);
+            window.Show();
+        }
+
+        private void MItem_Click(object sender, RoutedEventArgs e)
+        {
+            MenuItem menuItem = sender as MenuItem;
+            DataModels.KursSpecialnost ks = menuItem.DataContext as DataModels.KursSpecialnost; 
+            int idSpec = ks.specialnost.Id;
+            int kurs = ks.kurs.Id;
+            UchebPlanView window = new UchebPlanView(idSpec,kurs);
+            window.Show();
+        }
+
+        private void BackupBasaToFile()
+        {
+            SaveFileDialog sfBackup = new SaveFileDialog();
+            sfBackup.Filter = "sql files (*.sql)|*.sql|All files (*.*)|*.*";
+            sfBackup.RestoreDirectory = true;
+            sfBackup.InitialDirectory= System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string filename0 = string.Format("DataBackup от {0}.sql", DateTime.Now.ToShortDateString().Replace('.','_'));
+            sfBackup.FileName = filename0;
+            if (sfBackup.ShowDialog() == true)
+            {
+                string filename = "" + sfBackup.FileName + "";
+                BazaSoft bSoft = new BazaSoft();
+                using (MySqlConnection cn = new MySqlConnection(bSoft.MySqlConnectionString))
+                {
+                    using (MySqlCommand cmd = new MySqlCommand())
+                    {
+
+                        using (MySqlBackup mb = new MySqlBackup(cmd))
+                        {
+                            cmd.Connection = cn;
+                            cn.Open();
+                            mb.ExportToFile(filename);
+                            cn.Close();
+
+                        }
+
+                    }
+                }
+                try
+                {
+                    bool backupResult = true;
+                    if (backupResult == true)
+                    {
+                        MessageBox.Show("Сохранение базы данных выполнено!", "Sukses", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Gagal Backup Database!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+
+                catch (SystemException ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        public static void importDataBase()
+        {
+            try
+            {
+                // On demande le fichier à l'utilisateur
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                openFileDialog1.Title = "Rechercher un fichier";
+                openFileDialog1.FileName = "backup_gestionstock.sql";
+                openFileDialog1.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                openFileDialog1.Filter = "SQL files (*.sql)|*.sql|All files (*.*)|*.*";
+                openFileDialog1.RestoreDirectory = true;
+
+                if (openFileDialog1.ShowDialog() == true)
+                {
+                    try
+                    {
+                        // On affecte le chemin de l'utilisateur et son fichier puis on utilise le fichier pour la restauration
+                        string fileimport = openFileDialog1.FileName;
+                        BazaSoft bazaSoft = new BazaSoft();
+                        // On définit les variables
+                        MySqlCommand cmdimport = new MySqlCommand();
+                        MySqlBackup mbimport = new MySqlBackup(cmdimport);
+
+                        // On ouvre la connexion, utilise la fonction du package et on ferme la connexion
+                        cmdimport.Connection = new MySqlConnection(bazaSoft.MySqlConnectionString);
+                        cmdimport.Connection.Open();
+                       
+                        mbimport.ImportFromFile(fileimport);
+                        cmdimport.Connection.Close();
+                        MessageBox.Show("Base de données importée." + Environment.NewLine + "A partir du fichier situé dans le chemin : " + fileimport);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Erreur: " + ex.Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Impossible de lire le fichier à partir du disque. Erreur: " + ex.Message);
+            }
+        }
     }
 }

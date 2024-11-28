@@ -51,7 +51,6 @@ namespace SpoServiceSystem.Windows
         public static readonly DependencyProperty ItogoItem20Property;
         public static readonly DependencyProperty ItogoItem21Property;
         public static readonly DependencyProperty uchPlanGroupProperty;
-        public static readonly DependencyProperty uchPlanProperty;
         static UchPlanWindow()
         {
             ItogoItem1Property = DependencyProperty.Register("ItogoItem1", typeof(int), typeof(UchPlanWindow));
@@ -76,17 +75,11 @@ namespace SpoServiceSystem.Windows
             ItogoItem20Property = DependencyProperty.Register("ItogoItem20", typeof(int), typeof(UchPlanWindow));
             ItogoItem21Property = DependencyProperty.Register("ItogoItem21", typeof(int), typeof(UchPlanWindow));
             uchPlanGroupProperty = DependencyProperty.Register("uchPlanGroup", typeof(UchPlanGroup), typeof(UchPlanWindow));
-            uchPlanProperty = DependencyProperty.Register("uchPlan", typeof(DataModels.UchebPlan), typeof(UchPlanWindow));
         }
         public UchPlanGroup uchPlanGroup
         {
             get { return (UchPlanGroup)GetValue(uchPlanGroupProperty); }
             set { SetValue(uchPlanGroupProperty, value); }
-        }
-        public UchebPlan uchPlan
-        {
-            get { return (UchebPlan)GetValue(uchPlanProperty); }
-            set { SetValue(uchPlanProperty, value); }
         }
         public int ItogoItem1
         {
@@ -198,7 +191,6 @@ namespace SpoServiceSystem.Windows
         //public UchPlanGroup uchPlanGroup { get; set; }
         BazaSoft bs;
         MessageWindow message_window;
-        int VariantRunning;
         public UchPlanWindow()
         {
             InitializeComponent();
@@ -208,7 +200,6 @@ namespace SpoServiceSystem.Windows
         public UchPlanWindow(Group group) :this()
         {
             // Конструктор для новаго плана
-            VariantRunning=0;
             CurrentGroup = group;
             uchPlanGroup = new UchPlanGroup(group);
             uchPlanGroup.status = UchPlanStatus.New;
@@ -217,8 +208,8 @@ namespace SpoServiceSystem.Windows
             datagrid.ItemsSource = uchPlanGroup.GetNewUchPlan();
             datagrid.LoadingRow+=Datagrid_LoadingRow;
 
-          //  CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
-          //  view.Filter = SpecialnosrFilter;
+            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
+            view.Filter = SpecialnosrFilter;
             settingUpBtn.Visibility = Visibility.Visible;
             deleteUpBtn.Visibility= Visibility.Collapsed;
 
@@ -226,7 +217,6 @@ namespace SpoServiceSystem.Windows
         public UchPlanWindow(Group group,int var) : this()
         {
             // Конструктор для существующего учебного плана
-            VariantRunning =1;
             CurrentGroup = group;
             uchPlanGroup = new UchPlanGroup(group);
             uchPlanGroup.status = UchPlanStatus.Norma;
@@ -235,34 +225,11 @@ namespace SpoServiceSystem.Windows
             datagrid.ItemsSource = uchPlanGroup.GetUchPlan();
             datagrid.LoadingRow+=Datagrid_LoadingRow;
             datagrid.Loaded+=Datagrid_Loaded;
-            
 
-
-         //    CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
-         //   view.Filter = SpecialnosrFilter;
+             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
+            view.Filter = SpecialnosrFilter;
             settingUpBtn.Visibility = Visibility.Collapsed;
         }
-        public UchPlanWindow(int idSpec, int Kurs) : this()
-        {
-            // Конструктор для существующего учебного плана
-            VariantRunning =2;
-            CurrentGroup = null;
-            uchPlanGroup = new UchPlanGroup();
-            uchPlanGroup.status = UchPlanStatus.Norma;
-            uchPlanGroup.StringStatus = "Норма";
-            uchPlan = new UchebPlan(idSpec, Kurs);
-
-
-            // datagrid.ItemsSource = bs.GenerateUchPlanDataView(group.Id);
-            datagrid.ItemsSource = uchPlan.GetPlan();
-            datagrid.LoadingRow+=Datagrid_LoadingRow;
-            datagrid.Loaded+=Datagrid_Loaded;
-
-            //    CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(Col3.ItemsSource);
-            //   view.Filter = SpecialnosrFilter;
-            settingUpBtn.Visibility = Visibility.Collapsed;
-        }
-
 
         private void Datagrid_Loaded(object sender, RoutedEventArgs e)
         {
@@ -331,8 +298,6 @@ namespace SpoServiceSystem.Windows
             message_window.MessageText = "Операция выполнена!!!";
             message_window.OkBtn.Visibility = Visibility.Visible;
             uchPlanGroup.StringStatus = "Норма";
-            datagrid.ItemsSource = null;
-            datagrid.ItemsSource = uchPlanGroup.GetUchPlan();
             (datagrid.ItemsSource as DataView).Table.AcceptChanges();
         }
 
@@ -341,8 +306,7 @@ namespace SpoServiceSystem.Windows
             DataTable dt = e.Argument as DataTable;
             if (dt != null)
             {
-                int n = bs.SaveUchPlan(dt, CurrentGroup.Id);
-               
+                int n = bs.SaveUchPlan(dt);
                 if (n > 0)
                 {
                   //  dt.AcceptChanges();
@@ -447,14 +411,13 @@ namespace SpoServiceSystem.Windows
                 ItogoItem7+=int.Parse(r["Item6"].ToString());
                 ItogoItem8+=int.Parse(r["Item7"].ToString());
                 ItogoItem9+=int.Parse(r["Item8"].ToString());
-                ItogoItem10+=int.Parse(r["Item9"].ToString());
-                ItogoItem11+=int.Parse(r["Item10"].ToString());
-                ItogoItem12+=int.Parse(r["Item11"].ToString());
-                ItogoItem13+=int.Parse(r["Item12"].ToString());
-                ItogoItem14+=int.Parse(r["Item13"].ToString());
-                ItogoItem15+=int.Parse(r["Item14"].ToString());
-                ItogoItem16+=int.Parse(r["Item15"].ToString());
-               
+                ItogoItem10+=int.Parse(r["Item10"].ToString());
+                ItogoItem11+=int.Parse(r["Item11"].ToString());
+                ItogoItem12+=int.Parse(r["Item12"].ToString());
+                ItogoItem13+=int.Parse(r["Item13"].ToString());
+                ItogoItem14+=int.Parse(r["Item14"].ToString());
+                ItogoItem15+=int.Parse(r["Item15"].ToString());
+                ItogoItem16+=int.Parse(r["Item16"].ToString());
                 ItogoItem17+=int.Parse(r["Vsego2"].ToString());
                 ItogoItem18+=int.Parse(r["Item16"].ToString());
                 ItogoItem19+=int.Parse(r["Item17"].ToString());
@@ -465,8 +428,8 @@ namespace SpoServiceSystem.Windows
             }
             if((datagrid.ItemsSource as DataView).Table.GetChanges()!= null)
                 uchPlanGroup.StringStatus = "Изменен";
-           // else
-               // uchPlanGroup.StringStatus = "Норма";
+            else
+                uchPlanGroup.StringStatus = "Норма";
 
         }
 
@@ -512,8 +475,8 @@ namespace SpoServiceSystem.Windows
             System.Threading.Thread.Sleep(1000);
            
             DataTable dt = e.Argument  as DataTable;
-            bs.SaveUchPlan(dt, CurrentGroup.Id);
-            
+            bs.SaveUchPlan(dt); 
+
         }
 
         private void settingUpBtn_Click(object sender, RoutedEventArgs e)
@@ -541,67 +504,6 @@ namespace SpoServiceSystem.Windows
                 this.Close();
             }
                
-        }
-
-        private void Col25_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key ==Key.Back)
-            {
-                DataRowView drw = (sender as DataGridCell).DataContext as DataRowView;
-                string sql = "DELETE FROM prep_group_plan WHERE id_up="+drw.Row["id_up"].ToString();
-                bs.ExecCommand(sql);
-
-                drw.Row["id_prepod"] =DBNull.Value;
-                drw.Row["id_pgp"] =DBNull.Value; 
-                drw.Row["id_group"] =DBNull.Value; 
-                drw.Row["id_up1"] =DBNull.Value; 
-                drw.Row["id_pr1"] =DBNull.Value; 
-                drw.Row.Table.AcceptChanges();
-
-            }
-           //MessageBox.Show(e.Key.ToString());
-
-        }
-
-        private void Expander_Expanded(object sender, RoutedEventArgs e)
-        {
-            for(var vis = sender as Visual;vis != null; vis=VisualTreeHelper.GetParent(vis) as Visual) 
-            {
-                if (vis is DataGridRow)
-                {
-                    var row = (DataGridRow)vis;
-                    row.DetailsVisibility = row.DetailsVisibility==Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                    break;
-                }
-            }
-        }
-
-        private void Expander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            for (var vis = sender as Visual; vis != null; vis=VisualTreeHelper.GetParent(vis) as Visual)
-            {
-                if (vis is DataGridRow)
-                {
-                    var row = (DataGridRow)vis;
-                    row.DetailsVisibility = row.DetailsVisibility==Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-                    break;
-                }
-            }
-        }
-
-        private void datagrid_LoadingRowDetails(object sender, DataGridRowDetailsEventArgs e)
-        {
-                       
-            Border border = (Border)e.DetailsElement;
-            border.Width = border.ActualWidth-100;
-            Controls.PrepodPredmetDataGridxaml usecontrol = (Controls.PrepodPredmetDataGridxaml)border.Child;
-           usecontrol.idGroup = CurrentGroup.Id;
-           // usecontrol.uchPlanGroup = uchPlanGroup;
-            DataGrid dgrid = (DataGrid)usecontrol.FindName("datagrid");
-            dgrid.Width =  border.Width;
-            dgrid.ItemsSource = uchPlanGroup.GetChildData((int)usecontrol.ParentRow["id_up"], CurrentGroup.Id);
-           
-
         }
     }
 }

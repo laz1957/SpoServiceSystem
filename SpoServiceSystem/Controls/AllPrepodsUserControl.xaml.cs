@@ -62,8 +62,8 @@ namespace SpoServiceSystem.Controls
             shiftRightPanelBtn.Visibility = Visibility.Collapsed;
 
             CollectionView myCollectionView = (CollectionView)CollectionViewSource.GetDefaultView(PrepodsLB.ItemsSource);
-            myCollectionView.Filter 
-                =new Predicate<object>( (g) => ((PrepodFullItog)g).Fio.ToLower().IndexOf(FioFilterTxt.Text.ToLower()) !=-1);
+            myCollectionView.Filter =  UserFilter;
+            //    =new Predicate<object>( (g) => ((PrepodFullItog)g).Fio.ToLower().IndexOf(FioFilterTxt.Text.ToLower()) !=-1);
 
 
 
@@ -71,7 +71,28 @@ namespace SpoServiceSystem.Controls
             //  ((INotifyCollectionChanged)myCollectionView).CollectionChanged += new NotifyCollectionChangedEventHandler(DataGrid_CollectionChanged);
             // ((INotifyCollectionChanged)myCollectionView).CollectionChanged+=AllPrepodsUserControl_CollectionChanged;
         }
+        private bool UserFilter(object item)
+        {
+            PrepodFullItog prep = item as PrepodFullItog;
+            if (prep != null)
+            {
+                if (allRB.IsChecked.Value)
+                {
+                    return prep.Fio.ToLower().IndexOf(FioFilterTxt.Text.ToLower()) !=-1;
+                }
+                if (yesRB.IsChecked.Value)
+                {
+                    return prep.FullSumma >0 &&  prep.Fio.ToLower().IndexOf(FioFilterTxt.Text.ToLower()) !=-1;
+                }
+                if (noRB.IsChecked.Value)
+                {
+                    return prep.FullSumma<=0 &&  prep.Fio.ToLower().IndexOf(FioFilterTxt.Text.ToLower()) !=-1;
+                }
+            }
 
+
+            return true;
+        }
         private void shiftLeftPanelBtn_Click(object sender, RoutedEventArgs e)
         {
             Storyboard storyboard = new Storyboard();
@@ -214,10 +235,7 @@ namespace SpoServiceSystem.Controls
         #endregion
         void RaschetItogov(ItogiTable itogi)
         {
-            itogi.ItogoItem1=100;
-            itogi.ItogoItem2=100;
-            itogi.ItogoItem3=100;
-            itogi.ItogoItem4=100;
+           
 
 
             itogi.ItogoItem1=0;
@@ -253,13 +271,13 @@ namespace SpoServiceSystem.Controls
                 itogi.ItogoItem7+=int.Parse(r["Item6"].ToString());
                 itogi.ItogoItem8+=int.Parse(r["Item7"].ToString());
                 itogi.ItogoItem9+=int.Parse(r["Item8"].ToString());
-                itogi.ItogoItem10+=int.Parse(r["Item10"].ToString());
-                 itogi.ItogoItem11+=int.Parse(r["Item11"].ToString());
-                 itogi.ItogoItem12+=int.Parse(r["Item12"].ToString());
-                 itogi.ItogoItem13+=int.Parse(r["Item13"].ToString());
-                 itogi.ItogoItem14+=int.Parse(r["Item14"].ToString());
-                 itogi.ItogoItem15+=int.Parse(r["Item15"].ToString());
-                itogi.ItogoItem16+=int.Parse(r["Item16"].ToString());
+                itogi.ItogoItem10+=int.Parse(r["Item9"].ToString());
+                 itogi.ItogoItem11+=int.Parse(r["Item10"].ToString());
+                 itogi.ItogoItem12+=int.Parse(r["Item11"].ToString());
+                 itogi.ItogoItem13+=int.Parse(r["Item12"].ToString());
+                 itogi.ItogoItem14+=int.Parse(r["Item13"].ToString());
+                 itogi.ItogoItem15+=int.Parse(r["Item14"].ToString());
+                itogi.ItogoItem16+=int.Parse(r["Item15"].ToString());
                  itogi.ItogoItem17+=int.Parse(r["Vsego2"].ToString());
                 itogi.ItogoItem18+=int.Parse(r["Item16"].ToString());
                  itogi.ItogoItem19+=int.Parse(r["Item17"].ToString());
@@ -284,7 +302,7 @@ namespace SpoServiceSystem.Controls
 
         private void sbrosFilterBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            FioFilterTxt.Text = string.Empty;
         }
 
         private void saveExcelBtn_Click(object sender, RoutedEventArgs e)
@@ -366,6 +384,12 @@ namespace SpoServiceSystem.Controls
 
 
            
+        }
+
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if(PrepodsLB != null)
+                CollectionViewSource.GetDefaultView(PrepodsLB.ItemsSource).Refresh();
         }
     }
 }

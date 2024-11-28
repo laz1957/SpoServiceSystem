@@ -8,7 +8,7 @@
          xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
          xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
-        Title="GroupsWindow" Height="700" Width="1200">
+        Title="Учебные группы" Height="700" Width="1200">
     <Window.Resources>
         
         <class:RowStateToBrushConverter x:Key="colorconverter"/>

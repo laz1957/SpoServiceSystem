@@ -5,6 +5,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls.Ribbon;
 //using Microsoft.Office.Interop.Excel;
 using MySql.Data.MySqlClient;
@@ -176,7 +177,7 @@ namespace SpoServiceSystem.DataModels
                 {
                     MySqlCommand cmd = new MySqlCommand(sqlString, conn);
                     cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.Parameters.AddWithValue("idPrepod", id);
                     conn.Open();
                     MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                     adapter.Fill(dt);
@@ -193,6 +194,80 @@ namespace SpoServiceSystem.DataModels
             return dt;
         }
 
+        public DataTable getTableFromPprocedure(string sqlString, int id,int kurs)
+        {
+
+            DataTable? dt = new DataTable();
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(sqlString, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("idsp", id);
+                    cmd.Parameters.AddWithValue("kurs", kurs);
+                    conn.Open();
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                    conn.Close();
+
+                }
+                catch (Exception e)
+                {
+                    dt = null;
+                }
+
+            }
+
+            return dt;
+        }
+
+        public DataTable getTableFromPprocedure(string sqlString,int idgroup, int id, int kurs)
+        {
+
+            DataTable? dt = new DataTable();
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(sqlString, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("idgroup", idgroup);
+                    cmd.Parameters.AddWithValue("idsp", id);
+                    cmd.Parameters.AddWithValue("kurs", kurs);
+                    conn.Open();
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                    conn.Close();
+
+                }
+                catch (Exception e)
+                {
+                    dt = null;
+                }
+
+            }
+
+            return dt;
+        }
         public int SaveSpecialnost(DataTable dtable)
         {
             int n = -1;
@@ -601,27 +676,31 @@ namespace SpoServiceSystem.DataModels
             return dt.DefaultView;
         }
 
-        public int SaveUchPlan(DataTable dtable)
+        public int SaveUchPlan(DataTable dtable,int idgroup)
         {
             int n = -1;
-            string TableName = "uch_plan_groups";
-            string UpdateString = "UPDATE  uch_plan_groups SET " +
-                                  "id_group=@id_group,id_predmet=@id_predmet,id_prepod=@id_prepod," +
+            string TableName = "uch_plan";
+            string UpdateString = "UPDATE  uch_plan SET " +
+                                  "id_sp=@id_sp,id_pr=@id_pr,kurs=@kurs," +
                                   "Item1=@Item1,Item2=@Item2,Item3=@Item3,Item4=@Item4,"+
                                   "Item5=@Item5,Item6=@Item6,Item7=@Item7,Item8=@Item8,"+
                                   "Item9=@Item9,Item10=@Item10,Item11=@Item11,Item12=@Item12,"+
                                   "Item13=@Item13,Item14=@Item14,Item15=@Item15,Item16=@Item16,"+
                                   "Item17=@Item17,Item18=@Item18"+
                                 " WHERE id_up=@id_up";
-            string InsertString = "INSERT INTO uch_plan_groups (id_group,id_predmet,id_prepod,"+
+            string InsertString = "INSERT INTO uch_plan (id_sp,id_pr,kurs,"+
                                   "Item1,Item2,Item3,Item4,Item5,Item6,Item7,Item8,Item9,Item10,"+
                                   "Item11,Item12,Item13,Item14,Item15,Item16,Item17,Item18 )" +
-                                   "VALUES(@id_group,@id_predmet,@id_prepod," +
+                                   "VALUES(@id_sp,@id_pr,@ikurs," +
                                    "@Item1,@Item2,@Item3,@Item4,@Item5,@Item6,@Item7,@Item8,@Item9,@Item10,"+
                                   "@Item11,@Item12,@Item13,@Item14,@Item15,@Item16,@Item17,@Item18 )";
                                    
-            string DeleteString = "DELETE FROM uch_plan_groups WHERE id_up=@id_up";
-            string UpdateStr = string.Format(UpdateString, TableName);
+            string DeleteString = "DELETE FROM uch_plan WHERE id_up=@id_up";
+            string UpdateStringPrepGroup = "UPDATE  prep_group_plan SET " +
+                                           "id_up=@id_up,id_group=@id_group,id_pr=@id_pr,id_prepod=@id_prepod where id_pgp=@id_pgp";
+            string InsertStringPrepGroup = "INSERT INTO prep_group_plan (id_up,id_group,id_pr,id_prepod) values(@id_up,@id_group,@id_pr,@id_prepod)";
+
+
             try
             {
                 DataTable? dt = dtable.GetChanges();
@@ -631,12 +710,14 @@ namespace SpoServiceSystem.DataModels
                     {
                         conn.Open();
                         MySqlDataAdapter adapter = new MySqlDataAdapter();
-                        MySqlCommand com = new MySqlCommand(UpdateStr, conn);
+                        adapter.RowUpdated+=Adapter_RowUpdated;
+                        adapter.RowUpdating+=Adapter_RowUpdating;
+                        MySqlCommand com = new MySqlCommand(UpdateString, conn);
 
                         com.Parameters.Add("@id_up", MySqlDbType.Int32, 32, "id_up");
-                        com.Parameters.Add("@id_group", MySqlDbType.Int32, 32, "id_group");
-                        com.Parameters.Add("@id_predmet", MySqlDbType.Int32, 32, "id_predmet");
-                        com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_prepod");
+                        com.Parameters.Add("@id_sp", MySqlDbType.Int32, 32, "id_sp");
+                        com.Parameters.Add("@id_pr", MySqlDbType.Int32, 32, "id_pr");
+                        com.Parameters.Add("@kurs", MySqlDbType.Int32, 32, "kurs");
                         com.Parameters.Add("@Item1", MySqlDbType.Int32, 32, "Item1");
                         com.Parameters.Add("@Item2", MySqlDbType.Int32, 32, "Item2");
                         com.Parameters.Add("@Item3", MySqlDbType.Int32, 32, "Item3");
@@ -686,6 +767,46 @@ namespace SpoServiceSystem.DataModels
                         com.Parameters.Add("@id_up", MySqlDbType.Int32, 32, "id_up");
                         adapter.DeleteCommand = com;
                         n = adapter.Update(dt);
+/*
+                        foreach(DataRow row in dt.Rows)
+                        {
+                            object o = row["id_pgp"];
+                            object o1 = row["id_up1"];
+                            object o4 = row["id_pr1"];
+                            object o2 = row["id_group"];
+                            object o3 = row["id_prepod"];
+
+                            if (row.IsNull("id_pgp"))
+                            {
+                                com = new MySqlCommand(InsertStringPrepGroup, conn);
+                                com.Parameters.Add("@id_up", MySqlDbType.Int32);
+                                com.Parameters["@id_up"].Value = row["id_up"];
+                                com.Parameters.Add("@id_group", MySqlDbType.Int32);
+                                com.Parameters["@id_group"].Value =idgroup;
+                                com.Parameters.Add("@id_pr", MySqlDbType.Int32);
+                                com.Parameters["@id_pr"].Value = row["id_pr"];
+                                com.Parameters.Add("@id_prepod", MySqlDbType.Int32);
+                                com.Parameters["@id_prepod"].Value = row["id_prepod"];
+                                com.ExecuteNonQuery();
+                            }
+                            else
+                            {
+                                com = new MySqlCommand(UpdateStringPrepGroup, conn);
+                                com.Parameters.Add("@id_up", MySqlDbType.Int32);
+                                com.Parameters["@id_up"].Value = row["id_up"];
+                                com.Parameters.Add("@id_group", MySqlDbType.Int32);
+                                com.Parameters["@id_group"].Value =row["id_group"]; ;
+                                com.Parameters.Add("@id_pr", MySqlDbType.Int32);
+                                com.Parameters["@id_pr"].Value = row["id_pr"];
+                                com.Parameters.Add("@id_prepod", MySqlDbType.Int32);
+                                com.Parameters["@id_prepod"].Value = row["id_prepod"];
+                                com.Parameters.Add("@id_pgp", MySqlDbType.Int32);
+                                com.Parameters["@id_pgp"].Value = row["id_pgp"];
+                                com.ExecuteNonQuery();
+                            }
+                        }
+*/                       
+                        conn.Close();
                         dtable.AcceptChanges();
                     }
                 }
@@ -696,6 +817,119 @@ namespace SpoServiceSystem.DataModels
             }
             return n;
         }
+
+        private void Adapter_RowUpdated(object sender, MySqlRowUpdatedEventArgs e)
+        {
+            DataRow r = e.Row;
+        }
+
+        public int SavePrepodsGroupTable(DataTable dtable)
+        {
+            int n = -1;
+            string UpdateString = "UPDATE  prep_group_uchplan SET " +
+                                  "id_up=@id_up,id_group=@id_group,id_prepod=@id_prepod"+
+                                  "id_sp=@id_sp,id_pr=@id_pr,kurs=@kurs," +
+                                  "Item1=@Item1,Item2=@Item2,Item3=@Item3,Item4=@Item4,"+
+                                  "Item5=@Item5,Item6=@Item6,Item7=@Item7,Item8=@Item8,"+
+                                  "Item9=@Item9,Item10=@Item10,Item11=@Item11,Item12=@Item12,"+
+                                  "Item13=@Item13,Item14=@Item14,Item15=@Item15,Item16=@Item16,"+
+                                  "Item17=@Item17,Item18=@Item18"+
+                                " WHERE id_pgup=@id_pgup";
+            string InsertString = "INSERT INTO prep_group_uchplan (id_up,id_group,id_prepod,id_sp,id_pr,kurs,"+
+                                  "Item1,Item2,Item3,Item4,Item5,Item6,Item7,Item8,Item9,Item10,"+
+                                  "Item11,Item12,Item13,Item14,Item15,Item16,Item17,Item18 )" +
+                                   "VALUES(@id_up,@id_group,@id_prepod,@id_sp,@id_pr,@kurs," +
+                                   "@Item1,@Item2,@Item3,@Item4,@Item5,@Item6,@Item7,@Item8,@Item9,@Item10,"+
+                                  "@Item11,@Item12,@Item13,@Item14,@Item15,@Item16,@Item17,@Item18 )";
+
+            string DeleteString = "DELETE FROM prep_group_uchplan WHERE id_pgup=@id_pgup";
+           
+
+
+            try
+            {
+                DataTable? dt = dtable.GetChanges();
+                if (dt != null)
+                {
+                    using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+                    {
+                        conn.Open();
+                        MySqlDataAdapter adapter = new MySqlDataAdapter();
+                        MySqlCommand com = new MySqlCommand(UpdateString, conn);
+                        com.Parameters.Add("@id_pgup", MySqlDbType.Int32, 32, "id_pgup");
+                        com.Parameters.Add("@id_up", MySqlDbType.Int32, 32, "id_up");
+                        com.Parameters.Add("@id_group", MySqlDbType.Int32, 32, "id_group");
+                        com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_prepod");
+                        com.Parameters.Add("@id_sp", MySqlDbType.Int32, 32, "id_sp");
+                        com.Parameters.Add("@id_pr", MySqlDbType.Int32, 32, "id_pr");
+                        com.Parameters.Add("@kurs", MySqlDbType.Int32, 32, "kurs");
+                        com.Parameters.Add("@Item1", MySqlDbType.Int32, 32, "Item1");
+                        com.Parameters.Add("@Item2", MySqlDbType.Int32, 32, "Item2");
+                        com.Parameters.Add("@Item3", MySqlDbType.Int32, 32, "Item3");
+                        com.Parameters.Add("@Item4", MySqlDbType.Int32, 32, "Item4");
+                        com.Parameters.Add("@Item5", MySqlDbType.Int32, 32, "Item5");
+                        com.Parameters.Add("@Item6", MySqlDbType.Int32, 32, "Item6");
+                        com.Parameters.Add("@Item7", MySqlDbType.Int32, 32, "Item7");
+                        com.Parameters.Add("@Item8", MySqlDbType.Int32, 32, "Item8");
+                        com.Parameters.Add("@Item9", MySqlDbType.Int32, 32, "Item9");
+                        com.Parameters.Add("@Item10", MySqlDbType.Int32, 32, "Item10");
+                        com.Parameters.Add("@Item11", MySqlDbType.Int32, 32, "Item11");
+                        com.Parameters.Add("@Item12", MySqlDbType.Int32, 32, "Item12");
+                        com.Parameters.Add("@Item13", MySqlDbType.Int32, 32, "Item13");
+                        com.Parameters.Add("@Item14", MySqlDbType.Int32, 32, "Item14");
+                        com.Parameters.Add("@Item15", MySqlDbType.Int32, 32, "Item15");
+                        com.Parameters.Add("@Item16", MySqlDbType.Int32, 32, "Item16");
+                        com.Parameters.Add("@Item17", MySqlDbType.Int32, 32, "Item17");
+                        com.Parameters.Add("@Item18", MySqlDbType.Int32, 32, "Item18");
+                        adapter.UpdateCommand = com;
+
+                        com = new MySqlCommand(InsertString, conn);
+
+                        com.Parameters.Add("@id_up", MySqlDbType.Int32, 32, "id_up");
+                        com.Parameters.Add("@id_group", MySqlDbType.Int32, 32, "id_group");
+                        com.Parameters.Add("@id_prepod", MySqlDbType.Int32, 32, "id_prepod");
+                        com.Parameters.Add("@id_sp", MySqlDbType.Int32, 32, "id_sp");
+                        com.Parameters.Add("@id_pr", MySqlDbType.Int32, 32, "id_pr");
+                        com.Parameters.Add("@kurs", MySqlDbType.Int32, 32, "kurs");
+                        com.Parameters.Add("@Item1", MySqlDbType.Int32, 32, "Item1");
+                        com.Parameters.Add("@Item2", MySqlDbType.Int32, 32, "Item2");
+                        com.Parameters.Add("@Item3", MySqlDbType.Int32, 32, "Item3");
+                        com.Parameters.Add("@Item4", MySqlDbType.Int32, 32, "Item4");
+                        com.Parameters.Add("@Item5", MySqlDbType.Int32, 32, "Item5");
+                        com.Parameters.Add("@Item6", MySqlDbType.Int32, 32, "Item6");
+                        com.Parameters.Add("@Item7", MySqlDbType.Int32, 32, "Item7");
+                        com.Parameters.Add("@Item8", MySqlDbType.Int32, 32, "Item8");
+                        com.Parameters.Add("@Item9", MySqlDbType.Int32, 32, "Item9");
+                        com.Parameters.Add("@Item10", MySqlDbType.Int32, 32, "Item10");
+                        com.Parameters.Add("@Item11", MySqlDbType.Int32, 32, "Item11");
+                        com.Parameters.Add("@Item12", MySqlDbType.Int32, 32, "Item12");
+                        com.Parameters.Add("@Item13", MySqlDbType.Int32, 32, "Item13");
+                        com.Parameters.Add("@Item14", MySqlDbType.Int32, 32, "Item14");
+                        com.Parameters.Add("@Item15", MySqlDbType.Int32, 32, "Item15");
+                        com.Parameters.Add("@Item16", MySqlDbType.Int32, 32, "Item16");
+                        com.Parameters.Add("@Item17", MySqlDbType.Int32, 32, "Item17");
+                        com.Parameters.Add("@Item18", MySqlDbType.Int32, 32, "Item18");
+                        adapter.InsertCommand = com;
+
+                        com = new MySqlCommand(DeleteString, conn);
+                        com.Parameters.Add("@id_pgup", MySqlDbType.Int32, 32, "id_pgup");
+                        adapter.DeleteCommand = com;
+                        n = adapter.Update(dt);
+
+                        conn.Close();
+                        dtable.AcceptChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string str = ex.Message;
+                MessageBox.Show(str);
+            }
+
+            return n;
+        }
+
 
         #endregion------------------------------------
 
@@ -736,8 +970,20 @@ namespace SpoServiceSystem.DataModels
             {
                 conn.Open();
                 MySqlCommand command = new MySqlCommand(sql, conn);
-                n=command.ExecuteNonQuery();
+                n=int.Parse(command.ExecuteScalar().ToString());
                   conn.Close();
+            }
+            return n;
+        }
+        public int ExecCommand(string sql)
+        {
+            int n = 0;
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+                conn.Open();
+                MySqlCommand command = new MySqlCommand(sql, conn);
+                command.ExecuteScalar();
+                conn.Close();
             }
             return n;
         }

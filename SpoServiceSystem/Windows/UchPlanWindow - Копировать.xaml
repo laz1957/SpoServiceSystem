@@ -28,11 +28,11 @@
             <CheckBox x:Name="ViewExcel" Margin="0,0,10,0" IsChecked="False" VerticalAlignment="Center" >Открыть Excel</CheckBox>
             <Button  x:Name="ImportExcelBtn" Width="100" Margin="0,0,50,0" Click="ImportExcelBtn_Click" >Импорт в Excel</Button>
 
-            <Button  x:Name="settingUpBtn" Width="160" Click="settingUpBtn_Click" Visibility="Collapsed">Установить учебный план</Button>
-            <Button  x:Name="deleteUpBtn" Width="160" Click="deleteUpBtn_Click">Очистить учебный план</Button>
-            <Button  x:Name="addBtn" Width="100" Click="addBtn_Click" Visibility="Collapsed">Add</Button>
+            <Button  x:Name="settingUpBtn" Width="160" Click="settingUpBtn_Click">Установить учебный план</Button>
+            <Button  x:Name="deleteUpBtn" Width="160" Click="deleteUpBtn_Click">Удалить учебный план</Button>
+            <Button  x:Name="addBtn" Width="100" Click="addBtn_Click">Add</Button>
             <Button  x:Name="saveBtn" Width="100" Click="saveBtn_Click">Save</Button>
-            <Button  x:Name="delBtn" Width="100" Click="delBtn_Click" Visibility="Collapsed">Delete</Button>
+            <Button  x:Name="delBtn" Width="100" Click="delBtn_Click">Delete</Button>
             <Button  x:Name="exitBtn" Width="100" Click="exitBtn_Click">Выход</Button>
         </DockPanel>
         <DockPanel Grid.Row="0" Background="LightBlue"  LastChildFill="False" >
@@ -86,36 +86,15 @@
                 </Style>
             </ScrollViewer.Style>
             <StackPanel>
-                <DataGrid x:Name="datagrid" Width="{Binding ElementName=TopGrid ,Path=ActualWidth}" 
-                     
+                <DataGrid x:Name="datagrid" Width="1700" 
+                      ItemsSource="{Binding Source={StaticResource predmets}}"
                       AutoGenerateColumns="False"
                           CanUserAddRows="False"
                       CellEditEnding="datagrid_CellEditEnding"  
                       SelectedCellsChanged="dataGrid_SelectedCellsChanged"
                        CurrentCellChanged="datagrid_CurrentCellChanged" 
-                        LoadingRowDetails="datagrid_LoadingRowDetails" 
+                         
                       >
-                    <DataGrid.RowDetailsTemplate>
-                        <DataTemplate>
-                            <Border x:Name="detalsBorder"  BorderBrush="SteelBlue"
-                                    Margin="10"
-                                    Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}, Path=ActualWidth}"
-                                    BorderThickness="2" CornerRadius="5">
-                                <control:PrepodPredmetDataGridxaml x:Name="ExtendDataGrid"  DataContext="{Binding .}"  
-                                    uchPlanGroup="{Binding ElementName=PlanWindow,Path=uchPlanGroup,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                    
-                       />
-                            </Border>
-                        </DataTemplate>
-                    </DataGrid.RowDetailsTemplate>
-                    <DataGrid.RowHeaderTemplate>
-                        <DataTemplate>
-                            <Expander Expanded="Expander_Expanded" Collapsed="Expander_Collapsed">
-                                <ItemsPresenter VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                            </Expander>
-                        </DataTemplate>
-                    </DataGrid.RowHeaderTemplate>
-
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="VerticalContentAlignment" Value="Bottom"/>
@@ -127,57 +106,40 @@
                         </Style>
                     </DataGrid.RowStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn x:Name="Col1" Width="60" 
-                                            Header="№ п\п" Binding="{Binding Path=Number}" IsReadOnly="True">
+                        <DataGridTextColumn x:Name="Col1" Width="60" Header="№ п\п" Binding="{Binding Path=Number}" IsReadOnly="True">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextAlignment" Value="Center"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-                        <DataGridTextColumn x:Name="Col2" Width="120" 
-                                            Header="Индекс" Binding="{Binding Path=index_pr}" IsReadOnly="True">
+                        <DataGridTextColumn x:Name="Col2" Width="0.3*" Header="Индекс" Binding="{Binding Path=index_pr}">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextAlignment" Value="Center"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-
-                        <DataGridTextColumn x:Name="Col3" Width="0.7*" MinWidth="350" Header="Название учеюного предмета,курса,дисциплины (модуля)"
-                                            Binding="{Binding Path=name_pr}" IsReadOnly="True">
+                        <!--
+                        <DataGridTextColumn x:Name="Col31" Width="*" Header="Название учеюного предмета,курса,дисциплины (модуля)" 
+                                            Binding="{Binding Path=name_pr}">
                             <DataGridTextColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
                                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                 </Style>
                             </DataGridTextColumn.HeaderStyle>
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="TextWrapping" Value="Wrap"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
-<!--                        
-                        <DataGridComboBoxColumn x:Name="Col3" Width="0.7*" Header="Название учеюного предмета,курса,дисциплины (модуля)" IsReadOnly="True"
+                        -->
+                        
+                        <DataGridComboBoxColumn x:Name="Col3" Width="*" Header="Название учеюного предмета,курса,дисциплины (модуля)"
                                             ItemsSource="{Binding Source={StaticResource predmets}}"
                                             DisplayMemberPath="Name_pr"
                                             SelectedValuePath="Id_pr"
-                                            SelectedValueBinding="{Binding Path=id_pr}"
+                                            SelectedValueBinding="{Binding Path=id_predmet}"
                                             
                                             >
-
                             <DataGridComboBoxColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -190,9 +152,9 @@
                                     <EventSetter Event="SelectionChanged" Handler="SomeSelectionChanged" />
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
-                           
+
                         </DataGridComboBoxColumn>
- -->                       
+                        
                         <class:DataGridNumericColumn x:Name="Col4" Width="30" Binding="{Binding Path=Item1,Converter={StaticResource integerConverter}}">
 
                             <class:DataGridNumericColumn.HeaderTemplate   >
@@ -530,13 +492,12 @@
                                 </DataTemplate>
                             </class:DataGridNumericColumn.HeaderTemplate>
                         </class:DataGridNumericColumn>
-                        
- <!--                       
+                 
                         <DataGridComboBoxColumn x:Name="Col25" Width="0.5*" Header="ФИО преподавателя"
-                               ItemsSource="{Binding Source={StaticResource listPrepod}}" 
-                               DisplayMemberPath="Fio" SelectedValuePath="Id"
-                               SelectedValueBinding="{Binding Path=id_prepod}"
-                              
+                            ItemsSource="{Binding Source={StaticResource listPrepod}}"
+                            DisplayMemberPath="Fio"
+                            SelectedValuePath="Id"
+                            SelectedValueBinding="{Binding Path=id_prepod}" 
                                                >
                             <DataGridComboBoxColumn.HeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
@@ -549,13 +510,8 @@
                                     <Setter Property="IsEditable" Value="True"/>
                                 </Style>
                             </DataGridComboBoxColumn.EditingElementStyle>
-                            <DataGridComboBoxColumn.CellStyle>
-                                <Style TargetType="{x:Type DataGridCell}">
-                                    <EventSetter Event="PreviewKeyDown" Handler="Col25_KeyDown"/>
-                                </Style>
-                            </DataGridComboBoxColumn.CellStyle>
                         </DataGridComboBoxColumn>
- -->                    
+                     
                
 
 
@@ -574,7 +530,7 @@
 
 
                     <control:CustomGrid.ColumnDefinitions>
-                        <ColumnDefinition Width="35"/>
+
                         <ColumnDefinition Width="{Binding ElementName=Col1,Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=Col2,Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=Col3,Path=ActualWidth}"/>
@@ -599,38 +555,38 @@
                         <ColumnDefinition Width="{Binding ElementName=Col22,Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=Col23,Path=ActualWidth}"/>
                         <ColumnDefinition Width="{Binding ElementName=Col24,Path=ActualWidth}"/>
-                      
+                        <ColumnDefinition Width="{Binding ElementName=Col25,Path=ActualWidth}"/>
                     </control:CustomGrid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" HorizontalAlignment="Center"></TextBlock>
                     <TextBlock Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
-                    <TextBlock Grid.Column="2" HorizontalAlignment="Center"></TextBlock>
-                    <TextBlock Grid.Column="3" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,0,0">Итого</TextBlock>
+                    <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0">Итого</TextBlock>
 
-                    <TextBlock Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem1,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding ElementName=PlanWindow, Path=ItogoItem2,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem3,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem4,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="8" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem5,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="9" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem6,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem7,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem1,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding ElementName=PlanWindow, Path=ItogoItem2,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem3,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem4,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem5,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="8" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem6,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="9" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem7,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="11" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem8,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="12" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem9,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="13" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem10,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem8,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="11" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem9,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="12" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem10,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="14" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem11,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="15" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem12,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem13,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="17" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem14,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem15,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="19" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem16,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem17,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="13" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem11,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="14" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem12,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="15" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem13,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem14,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="17" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem15,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem16,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="19" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem17,UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <TextBlock Grid.Column="21" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem18,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="22" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem19,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="23" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem20,UpdateSourceTrigger=PropertyChanged}"/>
-                    <TextBlock Grid.Column="24" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem21,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem18,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="21" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem19,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="22" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem20,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="23" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem21,UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBlock Grid.Column="24" HorizontalAlignment="Center"/>
                     <TextBlock Grid.Column="25" HorizontalAlignment="Center"/>
-                   
                 </control:CustomGrid>
             </StackPanel>
         </ScrollViewer>

@@ -33,11 +33,12 @@ namespace SpoServiceSystem.Classes
         public Excel.Worksheet TargetSheet = null;
         UchPlanWindow window;
         AllPrepodsUserControl PrepodsUserControl;
+        UchPlansUserControl uchPlansUserControl;
         float Koefficient;
         string excelPatch;
         string excelFileName;
         bool isVisible = false;
-        int MaxColumnNumber = 25;
+        int MaxColumnNumber =25;
         public string ExcelFileName
         {
             get { return string.Format("{0}\\{1}", excelPatch, excelFileName); } 
@@ -64,6 +65,14 @@ namespace SpoServiceSystem.Classes
             excelFileName =Path.GetFileName(filename);
             isVisible = visible;
             PrepodsUserControl= _mainwindow;
+        }
+
+        public ExcelManager(UchPlansUserControl _mainwindow, string filename, bool visible) : this()
+        {
+            excelPatch =Path.GetDirectoryName(filename);
+            excelFileName =Path.GetFileName(filename);
+            isVisible = visible;
+            uchPlansUserControl = _mainwindow;
         }
         public int Close()
         {
@@ -324,6 +333,7 @@ workbook.CalculationOnSave = true;
                     if (column.GetCellContent(row) is TextBlock)
                     {
                         TextBlock cellContent = column.GetCellContent(row) as TextBlock;
+                        CurrentRange.WrapText=true;
                         CurrentRange.Value = cellContent.Text;
                     }
                     else
@@ -393,6 +403,161 @@ workbook.CalculationOnSave = true;
 
         }
         void GenerateDataGridContent(AllPrepodsUserControl window)
+        {
+            TargetSheet = (Excel.Worksheet)workbook.Sheets[1];
+            TargetSheet.Columns.AutoFit();
+            int TopRowNumber = 2;
+            int TopColumnNumber = 1;
+            int ColumnItogo1 = 10;
+            int ColumnItogo2 = 21;
+            int ColumnItogo3 = 25;
+
+
+            Excel.Range TableTopRange = (Excel.Range)TargetSheet.Cells[TopRowNumber, TopColumnNumber];
+            int r = TopRowNumber;
+            int c = TopColumnNumber;
+            List<DataGridColumnHeader> columnHeaders = WpfServises.GetVisualChildCollection<DataGridColumnHeader>(window.datagrid);
+            foreach (DataGridColumn column in window.datagrid.Columns)
+            {
+                // TargetSheet.Columns[c].ColumnWidth = 25;
+                string str = string.Empty;
+                Excel.Range CurrentRange = (Excel.Range)TableTopRange.Cells[r, c];
+                CurrentRange.EntireColumn.ColumnWidth = (column.ActualWidth*Koefficient);
+                if (column.Header != null)
+                {
+                    str = column.Header.ToString();
+                    CurrentRange.Value = str;
+                    CurrentRange.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
+                    CurrentRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+
+                }
+                else
+                {
+                    DataGridColumnHeader headerObj = WpfServises.GetColumnHeaderFromColumn(column, window.datagrid);
+                    foreach (TextBlock tb in WpfServises.FindVisualChildren<TextBlock>(headerObj))
+                    {
+                        str+=tb.Text+System.Environment.NewLine;
+                    }
+                    CurrentRange.Value = str;
+                    CurrentRange.Orientation = 90;
+                    CurrentRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    if (c==ColumnItogo1 || c==ColumnItogo2 || c==ColumnItogo3)
+                    {
+                        CurrentRange.Font.Bold = true;
+                    }
+                }
+
+                c++;
+
+            }
+
+            r=TopRowNumber+1;
+            var rows = WpfServises.GetDataGridRows(window.datagrid);
+            foreach (DataGridRow row in rows)
+            {
+                string str = string.Empty;
+                c=1;
+                foreach (DataGridColumn column in window.datagrid.Columns)
+                {
+                    Excel.Range CurrentRange = (Excel.Range)TableTopRange.Cells[r, c];
+
+                    if (c==ColumnItogo1)
+                    {
+                        CurrentRange.FormulaR1C1="=RC[-4]+RC[-2]";
+                        CurrentRange.Font.Bold = true;
+                        c++;
+                        continue;
+                    }
+                    if (c==ColumnItogo2)
+                    {
+                        CurrentRange.FormulaR1C1="=SUM(RC[-10]:RC[-1])";
+                        CurrentRange.Font.Bold = true;
+                        c++;
+                        continue;
+                    }
+                    if (c==ColumnItogo3)
+                    {
+                        CurrentRange.FormulaR1C1="=SUM(RC[-4]:RC[-1])";
+                        CurrentRange.Font.Bold = true;
+                        c++;
+                        continue;
+                    }
+                    if (column.GetCellContent(row) is TextBlock)
+                    {
+                        TextBlock cellContent = column.GetCellContent(row) as TextBlock;
+                        CurrentRange.WrapText = true;
+                        CurrentRange.Value = cellContent.Text;
+                    }
+                    else
+                    if (column.GetCellContent(row) is ComboBox)
+                    {
+
+                        FrameworkElement element = column.GetCellContent(row);
+                        System.Type tup = element.GetType();
+                        PropertyInfo? fieldInfo = tup.GetProperty("Text", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
+                        var value = fieldInfo?.GetValue(element);
+                        CurrentRange.Value = value?.ToString();
+                    }
+                    c++;
+                }
+
+                r++;
+            }
+            //----------- итоги --------------
+            c=1;
+            int CountRows = r-TopRowNumber-1;
+            foreach (DataGridColumn column in window.datagrid.Columns)
+            {
+                Excel.Range CurrentRange = (Excel.Range)TableTopRange.Cells[r, c];
+                if (c==4)
+                {
+
+                    CurrentRange.Value = "ИТОГО:";
+                    CurrentRange.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
+                    CurrentRange.Font.Bold = true;
+                }
+                if (c>=5)
+                {
+                    string str = string.Format("=SUM(R[-{0}]C:R[-1]C)", CountRows);
+                    CurrentRange.FormulaR1C1 = str;
+                    CurrentRange.Font.Bold = true;
+                }
+               
+                if (c==MaxColumnNumber) break;
+                c++;
+
+            }
+
+            Excel.Range range0 = (Excel.Range)TableTopRange.Cells[r-1, 1];
+            Excel.Range range1 = (Excel.Range)TableTopRange.Cells[r-1, c];
+            Excel.Range rangeColor = (Excel.Range)TableTopRange.get_Range(range0, range1);
+            rangeColor.Borders.Color = ColorTranslator.ToOle(Color.Black);
+            rangeColor.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(220, 220, 220));
+
+            Excel.Range range90 = (Excel.Range)TableTopRange.Cells[TopRowNumber-1, 10];
+            Excel.Range range91 = (Excel.Range)TableTopRange.Cells[r-1, 10];
+            Excel.Range range9 = (Excel.Range)TableTopRange.get_Range(range90, range91);
+            // range9.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(229, 228, 226));
+            range9.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(220, 220, 220));
+            range9.Borders.Color = ColorTranslator.ToOle(Color.Black);
+
+            Excel.Range range20 = (Excel.Range)TableTopRange.Cells[TopRowNumber-1, 21];
+            Excel.Range range21 = (Excel.Range)TableTopRange.Cells[r-1, 21];
+            Excel.Range range2 = (Excel.Range)TableTopRange.get_Range(range20, range21);
+            range2.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(220, 220, 220));
+            range2.Borders.Color = ColorTranslator.ToOle(Color.Black);
+
+            Excel.Range range30 = (Excel.Range)TableTopRange.Cells[TopRowNumber-1, 25];
+            Excel.Range range31 = (Excel.Range)TableTopRange.Cells[r-1, 25];
+            Excel.Range range3 = (Excel.Range)TableTopRange.get_Range(range30, range31);
+            range3.Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.FromArgb(220, 220, 220));
+            range3.Borders.Color = ColorTranslator.ToOle(Color.Black);
+
+            TableTopRange.Calculate();
+
+        }
+
+        void GenerateDataGridContent(UchPlansUserControl window)
         {
             TargetSheet = (Excel.Worksheet)workbook.Sheets[1];
             TargetSheet.Columns.AutoFit();
@@ -475,6 +640,7 @@ workbook.CalculationOnSave = true;
                     if (column.GetCellContent(row) is TextBlock)
                     {
                         TextBlock cellContent = column.GetCellContent(row) as TextBlock;
+                        CurrentRange.WrapText=true;
                         CurrentRange.Value = cellContent.Text;
                     }
                     else
@@ -511,7 +677,7 @@ workbook.CalculationOnSave = true;
                     CurrentRange.FormulaR1C1 = str;
                     CurrentRange.Font.Bold = true;
                 }
-                
+
                 if (c==MaxColumnNumber) break;
                 c++;
             }
@@ -544,6 +710,7 @@ workbook.CalculationOnSave = true;
             TableTopRange.Calculate();
 
         }
+
         void GenerateTitulPrepod(AllPrepodsUserControl window)
         {
             string text = string.Format("Учебный план от {0}.  Преподаватель: {1}", DateTime.Now.ToLongDateString(),window.prepodTB.Text);
@@ -560,11 +727,16 @@ workbook.CalculationOnSave = true;
         }
         public void GeneratePrepodExcelDocument()
         {
-            MaxColumnNumber = 24;
+            MaxColumnNumber = 25;
             GenerateDataGridContent(PrepodsUserControl);
             GenerateTitulPrepod(PrepodsUserControl);
         }
-
+        public void GenerateUchPlanDocument()
+        {
+            MaxColumnNumber = 24;
+            GenerateDataGridContent(uchPlansUserControl);
+           // GenerateTitulPrepod(PrepodsUserControl);
+        }
 
     }
 }

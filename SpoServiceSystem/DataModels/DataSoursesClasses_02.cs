@@ -19,6 +19,7 @@ namespace SpoServiceSystem.DataModels
         int itog1;
         int itog2;
         int itog;
+        int fullsumma;
         string fam = "";
         string name = "";
         string otch = "";
@@ -92,6 +93,20 @@ namespace SpoServiceSystem.DataModels
                 if (itog != value)
                 {
                     itog = value;
+                    
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public int FullSumma
+        {
+            get => fullsumma;
+            set
+            {
+                if (fullsumma != value)
+                {
+                    fullsumma = value;
+
                     OnPropertyChanged();
                 }
             }
@@ -185,7 +200,8 @@ namespace SpoServiceSystem.DataModels
                     Otch = row["otch"].ToString(),
                     Itog = row.IsNull("Itog") ? 0 : int.Parse(row["Itog"].ToString()),
                     Itog1 =row.IsNull("Itog1") ? 0 : int.Parse(row["Itog1"].ToString()),
-                    Itog2 =row.IsNull("Itog2") ? 0 : int.Parse(row["Itog2"].ToString())
+                    Itog2 =row.IsNull("Itog2") ? 0 : int.Parse(row["Itog2"].ToString()),
+                    FullSumma =row.IsNull("FullSumma" ) ? 0 : int.Parse(row["FullSumma"].ToString())
                 };
 
                 this.Add(item);
@@ -226,7 +242,8 @@ namespace SpoServiceSystem.DataModels
         }
         void Init(int idPrepod)
         {
-            string sql_Procedure = "GET_PREDMETS_PREPOD"; 
+            //string sql_Procedure = "GET_PREDMETS_PREPOD";
+            string sql_Procedure = "PREPOD_FULLDATA";
             BazaSoft bs = new BazaSoft();
             dt=bs.getTableFromPprocedure(sql_Procedure, idPrepod);
             AddColumns();
@@ -249,6 +266,13 @@ namespace SpoServiceSystem.DataModels
             dt.Columns["Itogo"].Expression = "Vsego2+Item16+Item17+Item18";
 
         }
+        public bool IsEmpty()
+        {
+            if(dt == null) return true;
+            if (dt.Rows.Count==0) return true;
+            return false;
+
+        }
 
     }
 
@@ -257,7 +281,7 @@ namespace SpoServiceSystem.DataModels
         int itogoItem1, itogoItem2, itogoItem3, itogoItem4, itogoItem5, itogoItem6,
             itogoItem7, itogoItem8, itogoItem9, itogoItem10, itogoItem11, itogoItem12,
             itogoItem13, itogoItem14, itogoItem15, itogoItem16, itogoItem17, itogoItem18,
-            itogoItem19, itogoItem20, itogoItem21 = 0;
+            itogoItem19, itogoItem20, itogoItem21, itogoItem22 = 0;
         public int ItogoItem1 { get=> itogoItem1; set { itogoItem1=value; OnPropertyChanged(); } }
         public int ItogoItem2 { get => itogoItem2; set { itogoItem2=value; OnPropertyChanged(); } }
         public int ItogoItem3 { get => itogoItem3; set { itogoItem3=value; OnPropertyChanged(); } }
@@ -265,7 +289,7 @@ namespace SpoServiceSystem.DataModels
         public int ItogoItem5 { get => itogoItem5; set { itogoItem5=value; OnPropertyChanged(); } }
         public int ItogoItem6 { get => itogoItem6; set { itogoItem6=value; OnPropertyChanged(); } }
         public int ItogoItem7 { get => itogoItem7; set { itogoItem7=value; OnPropertyChanged(); } }
-        public int ItogoItem8 { get => itogoItem8; set { itogoItem9=value; OnPropertyChanged(); } }
+        public int ItogoItem8 { get => itogoItem8; set { itogoItem8=value; OnPropertyChanged(); } }
         public int ItogoItem9 { get => itogoItem9; set { itogoItem9=value; OnPropertyChanged(); } }
         public int ItogoItem10 { get => itogoItem10; set { itogoItem10=value; OnPropertyChanged(); } }
         public int ItogoItem11 { get => itogoItem11; set { itogoItem11=value; OnPropertyChanged(); } }
@@ -280,7 +304,7 @@ namespace SpoServiceSystem.DataModels
         public int ItogoItem20 { get => itogoItem20; set { itogoItem20=value; OnPropertyChanged(); } }
         public int ItogoItem21 { get => itogoItem21; set { itogoItem21=value; OnPropertyChanged(); } }
 
-
+        public int ItogoItem22 { get => itogoItem22; set { itogoItem22=value; OnPropertyChanged(); } }
         public event PropertyChangedEventHandler? PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {

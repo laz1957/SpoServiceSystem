@@ -9,7 +9,7 @@
         xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
         
-        Title="SpecEditorWindow" Height="450" Width="800">
+        Title="Специальности" Height="450" Width="800">
     <Window.Resources>
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
         <data:BazaSoft x:Key="basatable"></data:BazaSoft>

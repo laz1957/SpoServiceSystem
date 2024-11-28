@@ -8,13 +8,84 @@
              xmlns:class ="clr-namespace:SpoServiceSystem.Classes"
              mc:Ignorable="d" 
              x:Name="AllPrepodsUC"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
         <model:ListPrepodFullItog x:Key="listPrepodFullItog"/>
         <model:PrepodPredmetsData x:Key="prepodPredmetsData" />
         <model:ItogiTable x:Key="itogiTable"/>
         <class:IntegerConverter x:Key="integerConverter"/>
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
+        <class:PrepodsListTemplateSelector x:Key="prepodsListTemplateSelector"/>
+        <DataTemplate x:Key="YesPlanTemplate">
+            <Grid Width="{Binding ElementName=PrepodsLB, Path=ActualWidth}" Margin="0,5,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Background="{Binding Source={StaticResource NormalBrush}}">
+                    <TextBlock Text="{Binding Path=Fio}" HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       FontWeight="Bold">
+
+                    </TextBlock>
+                </StackPanel>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle Grid.ColumnSpan="2" Grid.Row="0" Fill="AliceBlue" />
+                    <Rectangle Grid.ColumnSpan="2" Grid.Row="1" Fill="AntiqueWhite" />
+                    <Rectangle Grid.ColumnSpan="2" Grid.Row="2" Fill="AliceBlue" />
+                    <Rectangle Grid.ColumnSpan="2" Grid.Row="3" Fill="LightBlue" />
+                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Всего часов 1 семестр"></TextBlock>
+                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Всего часов 2 семестр"></TextBlock>
+                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Всего часов за год"></TextBlock>
+                    <TextBlock Grid.Column="1" Grid.Row="0" 
+                         VerticalAlignment="Center"
+                          Text="{Binding Path=Itog1}">
+
+                    </TextBlock>
+                    <TextBlock Grid.Column="1" Grid.Row="1" 
+                          VerticalAlignment="Center"
+                          Text="{Binding Path=Itog2}"></TextBlock>
+                    <TextBlock Grid.Column="1" Grid.Row="2" 
+                          VerticalAlignment="Center"
+                          Text="{Binding Path=Itog}"></TextBlock>
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text=" Детальный просмотр"/>
+                    <Button DataContext="{Binding Path=.}" Width="40"
+                       Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
+                       Click="Button_Click">OK</Button>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="NoPlanTemplate">
+            <Grid Width="{Binding ElementName=PrepodsLB, Path=ActualWidth}" Margin="0,5,0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Background="{Binding Source={StaticResource NormalBrush}}">
+                    <TextBlock Text="{Binding Path=Fio}" HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"
+                       FontWeight="Bold">
+
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                <TextBlock  Text="Нет данных!" HorizontalAlignment="Center" FontSize="14" FontWeight="Bold" Foreground="Maroon"/>
+                <Rectangle Height="3" Fill="Silver"></Rectangle>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -32,78 +103,38 @@
                 <ColumnDefinition x:Name="Column2"  Width="2.5*"/>
             </Grid.ColumnDefinitions>
             <StackPanel x:Name="leftPanel" Background="LightBlue" MouseLeftButtonDown="StackPanel_MouseLeftButtonDown">
-                <StackPanel Height="30" Orientation="Horizontal" Background="{Binding Source={ StaticResource NormalBrush}}">
+                <StackPanel Height="32" Orientation="Horizontal" Background="{Binding Source={ StaticResource NormalBrush}}">
                     <TextBlock Text="Фильтр:" Margin="10,0,20,0" VerticalAlignment="Center"/>
                     <TextBox Width="120" Height="24" x:Name="FioFilterTxt"
                              TextChanged="FioFilterTxt_TextChanged" 
                              ></TextBox>
                     <Button x:Name="sbrosFilterBtn" Width="30" Height="24" Click="sbrosFilterBtn_Click">X</Button>
                 </StackPanel>
-
-            
+                <StackPanel Height="60" Background="{Binding Source={ StaticResource NormalBrush}}" >
+                    <RadioButton x:Name="allRB"  IsChecked="True" Margin="20,2,2,2" Checked="RadioButton_Checked">Все</RadioButton>
+                    <RadioButton x:Name="yesRB" Margin="20,2,2,2" Checked="RadioButton_Checked">С нагрузкой</RadioButton>
+                    <RadioButton x:Name="noRB" Margin="20,2,2,2" Checked="RadioButton_Checked">Без нагрузки</RadioButton>
+                   
+                </StackPanel>
+                <Rectangle Height="3" Fill="Gray"></Rectangle>
                    <ListBox x:Name="PrepodsLB" SelectionChanged="PrepodsLB_SelectionChanged"   
-                        
+                                 ItemTemplateSelector="{StaticResource prepodsListTemplateSelector}"
                                  ItemsSource="{Binding Source={StaticResource listPrepodFullItog},IsAsync=True}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Width="{Binding ElementName=PrepodsLB, Path=ActualWidth}" Margin="0,5,0,5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"/>
-                                    <RowDefinition/>
-                                </Grid.RowDefinitions>
-                                <StackPanel Background="{Binding Source={StaticResource NormalBrush}}">
-                                    <TextBlock Text="{Binding Path=Fio}" HorizontalAlignment="Center" 
-                                            VerticalAlignment="Center"
-                                            FontWeight="Bold">
-
-                                    </TextBlock>
-                                </StackPanel>
-                                <Grid Grid.Row="1">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                        <RowDefinition/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Rectangle Grid.ColumnSpan="2" Grid.Row="0" Fill="AliceBlue" />
-                                    <Rectangle Grid.ColumnSpan="2" Grid.Row="1" Fill="AntiqueWhite" />
-                                    <Rectangle Grid.ColumnSpan="2" Grid.Row="2" Fill="AliceBlue" />
-                                    <Rectangle Grid.ColumnSpan="2" Grid.Row="3" Fill="LightBlue" />
-                                    <TextBlock Grid.Column="0" Grid.Row="0" Text="Всего часов 1 семестр"></TextBlock>
-                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Всего часов 2 семестр"></TextBlock>
-                                    <TextBlock Grid.Column="0" Grid.Row="2" Text="Всего часов за год"></TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="0" 
-                                              VerticalAlignment="Center"
-                                               Text="{Binding Path=Itog1}">
-
-                                    </TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="1" 
-                                               VerticalAlignment="Center"
-                                               Text="{Binding Path=Itog2}"></TextBlock>
-                                    <TextBlock Grid.Column="1" Grid.Row="2" 
-                                               VerticalAlignment="Center"
-                                               Text="{Binding Path=Itog}"></TextBlock>
-                                    <TextBlock Grid.Row="3" Grid.Column="0" Text=" Детальный просмотр"/>
-                                    <Button DataContext="{Binding Path=.}" Width="40"
-                                            Grid.Row="3" Grid.Column="1" VerticalAlignment="Center"
-                                            Click="Button_Click">OK</Button>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
+                  
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate >
                             <StackPanel Orientation="Vertical" Height="600"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
+                    
                 </ListBox>
                
             </StackPanel>
             <Grid Grid.Column="1" Background="Silver">
+
+           
+
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
                     <RowDefinition Height="*"/>
@@ -129,16 +160,17 @@
                     </ScrollViewer.Style>
                     <StackPanel>
 
-                        <DataGrid x:Name="datagrid" Width="1700" IsReadOnly="True"
+                        <DataGrid x:Name="datagrid" Width="auto" IsReadOnly="True"
                           ItemsSource="{Binding Source={StaticResource prepodPredmetsData}}"
                            AutoGenerateColumns="False"
                                CanUserAddRows="False"
                            CellEditEnding="datagrid_CellEditEnding"  
                            SelectedCellsChanged="dataGrid_SelectedCellsChanged"
                             CurrentCellChanged="datagrid_CurrentCellChanged" 
-                             
-                  
-               >
+                            >
+
+                           
+
                             <DataGrid.ColumnHeaderStyle>
                                 <Style TargetType="DataGridColumnHeader">
                                     <Setter Property="VerticalContentAlignment" Value="Bottom"/>
@@ -156,6 +188,24 @@
                                             <Setter Property="VerticalContentAlignment" Value="Center"/>
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn x:Name="ColDop1" Width="80" Header="Группа" Binding="{Binding Path=name_group}" IsReadOnly="True">
+                                    <DataGridTextColumn.HeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
                                 <DataGridTextColumn x:Name="Col2" Width="100" Header="Индекс" Binding="{Binding Path=index_pr}">
                                     <DataGridTextColumn.HeaderStyle>
@@ -164,6 +214,11 @@
                                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextAlignment" Value="Center"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
                                 <DataGridTextColumn x:Name="Col3" Width="350" Header="Название учеюного предмета,курса,дисциплины (модуля)" 
@@ -174,6 +229,11 @@
                                             <Setter Property="HorizontalContentAlignment" Value="Center"/>
                                         </Style>
                                     </DataGridTextColumn.HeaderStyle>
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
                                 </DataGridTextColumn>
 
 
@@ -533,6 +593,7 @@
                             <Grid.ColumnDefinitions>
 
                                 <ColumnDefinition Width="{Binding ElementName=Col1,Path=ActualWidth}"/>
+                                <ColumnDefinition Width="{Binding ElementName=ColDop1,Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=Col2,Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=Col3,Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=Col4,Path=ActualWidth}"/>
@@ -556,38 +617,37 @@
                                 <ColumnDefinition Width="{Binding ElementName=Col22,Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=Col23,Path=ActualWidth}"/>
                                 <ColumnDefinition Width="{Binding ElementName=Col24,Path=ActualWidth}"/>
-                                <ColumnDefinition Width="{Binding ElementName=Col25,Path=ActualWidth}"/>
+                              
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" HorizontalAlignment="Center"></TextBlock>
                             <TextBlock Grid.Column="1" HorizontalAlignment="Center"></TextBlock>
-                            <TextBlock Grid.Column="2" HorizontalAlignment="Left" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0">Итого</TextBlock>
+                            <TextBlock Grid.Column="3" HorizontalAlignment="Left" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0">Итого</TextBlock>
 
-                            <TextBlock Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem1,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem2,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem3,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem4,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem5,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="8" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem6,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="9" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem7,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem1,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="5" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem2,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="6" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem3,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="7" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem4,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="8" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem5,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="9" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem6,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem7,UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Column="10" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem8,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="11" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem9,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="12" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem10,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="11" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem8,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="12" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem9,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="13" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem10,UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Column="13" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem11,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="14" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem12,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="15" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem13,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem14,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="17" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem15,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem16,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="19" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem17,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="14" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem11,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="15" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem12,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="16" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem13,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="17" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem14,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="18" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem15,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="19" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem16,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem17,UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Column="20" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem18,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="21" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem19,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="22" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem20,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="23" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem21,UpdateSourceTrigger=PropertyChanged}"/>
-                            <TextBlock Grid.Column="24" HorizontalAlignment="Center"/>
-                            <TextBlock Grid.Column="25" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="21" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem18,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="22" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem19,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="23" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold"  Text="{Binding Path=ItogoItem20,UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Column="24" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Text="{Binding Path=ItogoItem21,UpdateSourceTrigger=PropertyChanged}"/>
+                           
                         </Grid>
                     </StackPanel>
                 </ScrollViewer>
@@ -598,8 +658,8 @@
                             Click="saveExcelBtn_Click"
                             Visibility="Hidden">Сохранить в Excel</Button>
                     <Button x:Name="savePdfBtn" DockPanel.Dock="Right" Width="120"
-        Click="savePdfBtn_Click"
-        Visibility="Hidden">Сохранить в PDF</Button>
+                            Click="savePdfBtn_Click"
+                            Visibility="Hidden">Сохранить в PDF</Button>    
                 </DockPanel>
             </Grid>
             <GridSplitter x:Name="gridSplitter" Grid.Column="0" Grid.RowSpan="3"  ShowsPreview="False" Width="5" Background="Gray"

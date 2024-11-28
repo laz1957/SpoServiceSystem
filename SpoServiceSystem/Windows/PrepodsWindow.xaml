@@ -8,7 +8,7 @@
         xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
         xmlns:class="clr-namespace:SpoServiceSystem.Classes"
         mc:Ignorable="d"
-        Title="PrepodsWindow" Height="700" Width="900">
+        Title="Преподаватели" Height="700" Width="900">
     <Window.Resources>
         <class:RowStateToBrushConverter x:Key="colorconverter"/>
         <data:BazaSoft x:Key="basatable"></data:BazaSoft>

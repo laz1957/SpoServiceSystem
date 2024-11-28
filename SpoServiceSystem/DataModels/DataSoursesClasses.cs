@@ -729,6 +729,8 @@ namespace SpoServiceSystem.DataModels
             if (dt != null)
                 foreach (DataRow dr in dt.Rows)
                 {
+                   
+                  
                     long x = dr.Field<long>("kurs");
                     Group sp = new Group(
                         dr.Field<int>("id_group"),
@@ -769,8 +771,8 @@ namespace SpoServiceSystem.DataModels
         public void CalculateItogFromPlan(Group group)
         {
             BazaSoft bs = new BazaSoft();
-            string sql = "select sum(Item2) as Semestr1,sum(Item4) as Semestr2 FROM uch_plan_groups where id_group="+group.Id.ToString();
-            string sql_count = "select COUNT(*) as Count FROM uch_plan_groups where id_group="+group.Id.ToString();
+            string sql = "select sum(Item2) as Semestr1,sum(Item4) as Semestr2 FROM uch_plan where id_sp="+group.Id_sp.ToString()+" AND kurs="+group.Kurs.ToString();
+            string sql_count = "select COUNT(*) as Count FROM uch_plan where id_sp="+group.Id_sp.ToString()+" AND kurs="+group.Kurs.ToString();
             DataTable dt = bs.getTable(sql);
             if (dt.Rows.Count == 0)
             {
@@ -787,7 +789,7 @@ namespace SpoServiceSystem.DataModels
                 else
                     Semestr2=0;
                 Itogo= Semestr1+Semestr2;
-                Count = bs.getCountRows("uch_plan_groups", group.Id);
+                Count = bs.RunCommand(sql_count);
             }
         }
     }
@@ -823,14 +825,22 @@ namespace SpoServiceSystem.DataModels
                 }
             }
         }
-
+        public DataTable Table_UchPlan_Prep_Group { get; set; }
+        public DataSet dataSet { get; set; }
+        public DataRelation relation { get; set; }  
 
         BazaSoft bsManager;
         string sql_get_plan = "select uch_plan_groups.*,predmets.index_pr from uch_plan_groups "+
                                "LEFT JOIN predmets ON predmets.id_pr = id_predmet where id_group={0}";
         string sql_new_plan = "select * From get_empty_plan limit 0";
         string sql_insert_predmets = "select * From predmets where id_sp={0} and kurs={1}";
-        string sql_delete_plan = "delete  From uch_plan_groups where id_group={0}";
+        string sql_delete_plan = "delete  From prep_group_plan where id_group={0}";
+
+       // string sql_Procedure = "GET_UCHPLAN_GROUP_PREPODS";
+        string sql_Procedure = "GET_UCH_PLAN";
+        string ChildTableName = "prep_group_uchplan";
+        public DataTable prepods_groups_table;
+        public UchPlanGroup() { }
         public UchPlanGroup(Group _group) : this(_group.Id)
         {
             group = _group;
@@ -838,9 +848,10 @@ namespace SpoServiceSystem.DataModels
         public UchPlanGroup(int id_group)
         {
             bsManager = new BazaSoft();
-            TableName="uch_plan_groups";
+            TableName="prep_group";
             Id= id_group;
             status = GetStaus();
+            dataSet = new DataSet();
            // sql_new_plan=string.Format(sql_new_plan, TableName);
         }
         UchPlanStatus GetStaus()
@@ -865,15 +876,36 @@ namespace SpoServiceSystem.DataModels
         }
         public DataView GetUchPlan()
         {
-           string sql = string.Format(sql_get_plan,group.Id);
-           DataTable dt = bsManager.getTable_AvtoIncriment(sql);
-         
-           
+            
+          //  DataTable dt = bsManager.getTableFromPprocedure(sql_Procedure, group.Id, group.Id_sp, (int)group.Kurs);
+            DataTable dt = bsManager.getTableFromPprocedure(sql_Procedure, group.Id_sp, (int)group.Kurs);
             InsertInfoColumns(dt);
             dt.AcceptChanges();
-            return dt.DefaultView;
+         //   prepods_groups_table = bsManager.getDataTable(ChildTableName);
+          //  dataSet.Tables.Add(dt);
+         //   dataSet.Tables.Add(prepods_groups_table);
+         //   relation = dataSet.Relations.Add("uchplan", dataSet.Tables[0].Columns["id_up"],
+         //                       dataSet.Tables[1].Columns["id_up"]);
+            
+            if (dt.Rows[0].IsNull("id_up"))
+            {
+
+                StringStatus = "НЕ ЗАРЕГИСТРИРОВАН!!!";
+            }
+                return dt.DefaultView;
         
          }
+        public DataView GetChildData(int idUchPlan, int idGroup)
+        {
+            string sql = string.Format("SELECT * FROM {0} WHERE id_up={1} and id_group={2}", ChildTableName, idUchPlan,idGroup);
+            DataTable dt = bsManager.getTable(sql);
+            InsertInfoColumns(dt);
+            return dt.DefaultView;
+        }
+        public void SaveChildData(DataTable dtChild)
+        {
+            bsManager.SavePrepodsGroupTable(dtChild);
+        }
         public DataView GetNewUchPlan()
         {
             int count = 0;

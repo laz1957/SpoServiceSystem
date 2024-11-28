@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SpoServiceSystem.Controls"
              xmlns:model="clr-namespace:SpoServiceSystem.DataModels"
+             xmlns:class ="clr-namespace:SpoServiceSystem.Classes"
              mc:Ignorable="d" 
              Background="Snow"
              d:DesignHeight="600" d:DesignWidth="800">
@@ -14,6 +15,48 @@
         <model:ListGroup x:Key="listGroup" />
         <model:Kurses x:Key="listKurs" />
         <model:ListOtdelenie x:Key="listOtdelenie" />
+        <class:GroupsListTemplateSelector x:Key="groupsListTemplateSelector"/>
+        <ControlTemplate x:Key="WaitControlTemplate">
+            <Border BorderThickness="1"
+         BorderBrush="{x:Static SystemColors.ControlDarkDarkBrush}" Background="#CCADAEB0">
+                <StackPanel>
+                    <TextBlock HorizontalAlignment="Center" Text="Подождите, идет обработка..." />
+                </StackPanel>
+            </Border>
+        </ControlTemplate>
+        <Style TargetType="{x:Type ListBox}">
+            <Style.Triggers>
+                <Trigger Property="ItemsSource" Value="{x:Null}">
+                    <Setter Property="Template" Value="{StaticResource WaitControlTemplate}" />
+                </Trigger>
+            </Style.Triggers>
+            </Style>
+
+        <DataTemplate x:Key="YesGroupPlanTemplate">
+
+
+                <DockPanel Width="140" Height="80" Background="White">
+                    <Rectangle Fill="{Binding Source={StaticResource VerticalBrush}}" Width="20" />
+                    <Image Source="pack://application:,,,/ImageLib;component/Resources/images10.jpg" Height="42" />
+                    <TextBlock Text="{Binding Path=NameGroup}" VerticalAlignment="Center" FontWeight="Bold"/>
+
+                </DockPanel>
+
+
+        </DataTemplate>
+        <DataTemplate x:Key="NoGroupPlanTemplate">
+
+
+                <DockPanel Width="140" Height="80" Background="White">
+                    <Rectangle Fill="{Binding Source={StaticResource VerticalBrush_1}}" Width="20" />
+                    <Image Source="pack://application:,,,/ImageLib;component/Resources/images10.jpg" Height="42" />
+                    <TextBlock Text="{Binding Path=NameGroup}" VerticalAlignment="Center" Foreground="Maroon"/>
+
+                </DockPanel>
+
+
+        </DataTemplate>
+
     </UserControl.Resources>
     <local:CustomGrid GridLineBrush="Black" GridLineThickness="5"
                      
@@ -71,6 +114,16 @@
         </DockPanel>
         <StackPanel  Grid.Row="1" Margin="0,0,1,0" >
             <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
+            <Button x:Name="sbrosBtn" Click="sbrosBtn_Click">Cброс фильтров</Button>
+            <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
+            <StackPanel Orientation="Horizontal" Height="30" Background="{Binding Source={ StaticResource NormalBrush}}" >
+                <RadioButton x:Name="allRB"  IsChecked="True" Margin="2,2,2,2" Checked="RadioButton_Checked">Все</RadioButton>
+                <RadioButton x:Name="yesRB" Margin="2,2,2,2" Checked="RadioButton_Checked">Есть план</RadioButton>
+                <RadioButton x:Name="noRB" Margin="2,2,2,2" Checked="RadioButton_Checked">Нет плана</RadioButton>
+
+            </StackPanel>
+
+
             <TextBlock Text="Отделение" HorizontalAlignment="Center"></TextBlock>
             <ListBox x:Name="otdelenieLB"
                  SelectionChanged="otdelenieLB_SelectionChanged"
@@ -106,34 +159,22 @@
                  >
             
         </ListBox>
-            <Rectangle  Fill="{Binding Source={StaticResource NormalBrush}}" Height="7"/>
-            <Button x:Name="sbrosBtn" Click="sbrosBtn_Click">Cброс фильтров</Button>
+           
         </StackPanel>
         <DockPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
-        <ListBox x:Name="groupLB" ItemsSource="{Binding Source={StaticResource listGroup}}"
+        <ListBox x:Name="groupLB" ItemsSource="{Binding Source={StaticResource listGroup},IsAsync=True}"
                  SelectionChanged="groupLB_SelectionChanged"    
+                  ItemTemplateSelector="{StaticResource groupsListTemplateSelector}"
                   >
-            <ListBox.ItemsPanel>
+                
+                <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
                                                Orientation="Horizontal" 
-              
-
                 Background="Silver"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                       
-                <DockPanel Width="140" Height="80" Background="White">
-                            <Rectangle Fill="{Binding Source={StaticResource VerticalBrush}}" Width="20" />
-                            <Image Source="pack://application:,,,/ImageLib;component/Resources/images10.jpg" Height="42" />
-                            <TextBlock Text="{Binding Path=NameGroup}" VerticalAlignment="Center"/>
-                           
-                        </DockPanel>
-                     
-                    </DataTemplate>
-            </ListBox.ItemTemplate>
+           
         </ListBox>
         </DockPanel>
         <Border Grid.Row="1" Grid.Column="2">
