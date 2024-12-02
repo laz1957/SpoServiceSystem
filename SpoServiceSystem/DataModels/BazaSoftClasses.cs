@@ -268,6 +268,41 @@ namespace SpoServiceSystem.DataModels
 
             return dt;
         }
+        public DataTable getTableFromPprocedure(string sqlString, int id,string nameParameter)
+        {
+
+            DataTable? dt = new DataTable();
+            DataColumn dc = new DataColumn();
+            dc.ColumnName = "Number";
+            dc.DataType = typeof(int);
+            dc.AutoIncrement = true;
+            dc.AutoIncrementSeed = 1;
+            dc.AutoIncrementStep = 1;
+            dt.Columns.Add(dc);
+
+            using (MySqlConnection conn = new MySqlConnection(MySqlConnectionString))
+            {
+
+                try
+                {
+                    MySqlCommand cmd = new MySqlCommand(sqlString, conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue(nameParameter, id);
+                    conn.Open();
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    adapter.Fill(dt);
+                    conn.Close();
+
+                }
+                catch (Exception e)
+                {
+                    dt = null;
+                }
+
+            }
+
+            return dt;
+        }
         public int SaveSpecialnost(DataTable dtable)
         {
             int n = -1;

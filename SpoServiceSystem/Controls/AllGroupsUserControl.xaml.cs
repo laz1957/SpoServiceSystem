@@ -25,13 +25,14 @@ namespace SpoServiceSystem.Controls
     public partial class AllGroupsUserControl : UserControl
     {
         CollectionView viewGroups;
+        public static event EventHandler loadingDelegat;
         public AllGroupsUserControl()
         {
             InitializeComponent();
 
             OpenPlanBtn.Visibility = Visibility.Hidden;
             NewPlanBtn.Visibility= Visibility.Hidden;
-
+            OpenNagruzkaBtn.Visibility = Visibility.Hidden;
             Kvalification kv = new Kvalification(0, "Все категории", "...");
             (KvalificationCB.ItemsSource as ListKvalification).Insert(0, kv);
             Kurs kurs = new Kurs();
@@ -51,9 +52,20 @@ namespace SpoServiceSystem.Controls
 
             viewGroups = (CollectionView)CollectionViewSource.GetDefaultView(groupLB.ItemsSource);
             viewGroups.Filter = GroupsFilter;
-           // view.Filter = new Predicate<object>((o) => ((Student)o).StudentName.StartsWith(SearchPattern));
-
+            // view.Filter = new Predicate<object>((o) => ((Student)o).StudentName.StartsWith(SearchPattern));
+            this.Loaded+=AllGroupsUserControl_Loaded;
         }
+
+        private void AllGroupsUserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (loadingDelegat != null)
+            {
+                EventHandler handler = loadingDelegat;
+                handler?.Invoke(this, e);
+            }
+             //   loadingDelegat(this, null);
+        }
+
         bool GroupsFilter(object item)
         {
             Predicate<Group> isnull = (Group p) => { return true; };
@@ -118,6 +130,7 @@ namespace SpoServiceSystem.Controls
             CollectionViewSource.GetDefaultView(groupLB.ItemsSource).Refresh();
             OpenPlanBtn.Visibility = Visibility.Hidden;
             NewPlanBtn.Visibility= Visibility.Hidden;
+            OpenNagruzkaBtn.Visibility= Visibility.Hidden;
 
         }
         private void groupLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -130,12 +143,14 @@ namespace SpoServiceSystem.Controls
                         if (grpup.groupPlanInfo.Count > 0)
                         {
                             OpenPlanBtn.Visibility = Visibility.Visible;
+                            OpenNagruzkaBtn.Visibility = Visibility.Visible;
                             NewPlanBtn.Visibility= Visibility.Hidden;
                         }
-                        else
+                        else  
                         {
                             OpenPlanBtn.Visibility = Visibility.Hidden;
                             NewPlanBtn.Visibility= Visibility.Hidden;
+                            OpenNagruzkaBtn.Visibility= Visibility.Hidden;
                         }
                   
                     }
@@ -150,6 +165,7 @@ namespace SpoServiceSystem.Controls
             {
                 OpenPlanBtn.Visibility = Visibility.Hidden;
                 NewPlanBtn.Visibility= Visibility.Hidden;
+                OpenNagruzkaBtn.Visibility= Visibility.Hidden;
             }
         }
         private void kursLB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -163,6 +179,7 @@ namespace SpoServiceSystem.Controls
             {
                 OpenPlanBtn.Visibility = Visibility.Hidden;
                 NewPlanBtn.Visibility= Visibility.Hidden;
+                OpenNagruzkaBtn.Visibility= Visibility.Hidden;  
             }
         }
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -215,8 +232,24 @@ namespace SpoServiceSystem.Controls
                 CollectionViewSource.GetDefaultView(groupLB.ItemsSource).Refresh();
                 OpenPlanBtn.Visibility = Visibility.Hidden;
                 NewPlanBtn.Visibility= Visibility.Hidden;
+                OpenNagruzkaBtn.Visibility= Visibility.Hidden;
             }
         
+        }
+
+        private void OpenNagruzkaBtn_Click(object sender, RoutedEventArgs e)
+        {
+            
+            if ((sender as FrameworkElement).DataContext != null)
+            {
+                Group gr = (sender as FrameworkElement).DataContext as Group;
+                if (gr != null)
+                {
+                    NagruzkaPrepodFromGroupWindow nagWin = new NagruzkaPrepodFromGroupWindow(gr);
+                    nagWin.Show();
+
+                }
+            }
         }
     }
 }

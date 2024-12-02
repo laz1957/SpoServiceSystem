@@ -54,11 +54,9 @@ namespace SpoServiceSystem.DataModels
     public class TipUchList:ObservableCollection<TipUch>
     {
         public TipUchList() { 
-            Add(new TipUch(1,"Иван"));
-            Add(new TipUch(2, "Сергей"));
-            Add(new TipUch(3, "Петр"));
-            Add(new TipUch(4, "Игнат"));
-            Add(new TipUch(5, "Семен"));
+            Add(new TipUch(1,"Бюджет"));
+            Add(new TipUch(2, "ВнеБюджет"));
+           
         }
 
     }

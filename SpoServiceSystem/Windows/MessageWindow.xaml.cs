@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SpoServiceSystem.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -43,11 +44,21 @@ namespace SpoServiceSystem.Windows
         {
             InitializeComponent();
             MessageText = "***";
+            AllGroupsUserControl.loadingDelegat+=AllGroupsUserControl_loadingDelegat;
+            DataFromRaspWindow.loadingDelegat+=AllGroupsUserControl_loadingDelegat;
         }
+
+        private void AllGroupsUserControl_loadingDelegat(object? sender, EventArgs e)
+        {
+            this.Close();
+        }
+
         public MessageWindow(string strmessage)
         {
             InitializeComponent();
             MessageText = strmessage;
+            AllGroupsUserControl.loadingDelegat+=AllGroupsUserControl_loadingDelegat;
+            DataFromRaspWindow.loadingDelegat+=AllGroupsUserControl_loadingDelegat;
         }
 
         private void OkBtn_Click(object sender, RoutedEventArgs e)

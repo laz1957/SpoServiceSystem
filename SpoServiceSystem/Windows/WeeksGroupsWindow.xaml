@@ -1,0 +1,76 @@
+﻿<Window x:Class="SpoServiceSystem.Windows.WeeksGroupsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SpoServiceSystem.Windows"
+         xmlns:data="clr-namespace:SpoServiceSystem.DataModels"
+         xmlns:class="clr-namespace:SpoServiceSystem.Classes"
+        mc:Ignorable="d"
+        Title="Учебные группы" Height="450" Width="810">
+    <Window.Resources>
+        <data:ListSpecialnost x:Key="listSpecialnost"/>
+        <data:ListOtdelenie x:Key="listOtdelenie"/>
+        <data:Kurses x:Key="kurses"/>
+        <data:TipUchList x:Key="tipUchList"/>
+        <class:RowStateToBrushConverter x:Key="colorconverter"/>
+        
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="35"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Background="LightBlue"  LastChildFill="False">
+           
+          
+            <TextBlock Text="Курс:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+            <ComboBox x:Name="kursCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource kurses}}"
+                      SelectionChanged="kursCB_SelectionChanged"
+                      DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+            <Button x:Name="ClearkursFilter" Width="24" Height="24" Click="ClearkursFilter_Click">X</Button>
+            <TextBlock Text="Отд-е:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+            <ComboBox x:Name="otdCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource listOtdelenie}}"
+                      SelectionChanged="otdCB_SelectionChanged"
+                      DisplayMemberPath="Name" SelectedValuePath="Id"/>
+
+            <Button x:Name="ClearOtdFilter" Width="24" Height="24" Click="ClearOtdFilter_Click">X</Button>
+            <TextBlock Text="Спец-сть:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+            <ComboBox x:Name="specCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource listSpecialnost}}"
+                      SelectionChanged="specCB_SelectionChanged"    
+          DisplayMemberPath="FullName" SelectedValuePath="Id"/>
+            <Button x:Name="ClearSpecFilter" Width="24" Height="24" Click="ClearSpecFilter_Click">X</Button>
+            <TextBlock Text="Тип обуч.:" VerticalAlignment="Center" Margin="5,0,5,0"/>
+            <ComboBox x:Name="tipCB" Width="120" Height="24"
+                      ItemsSource="{Binding Source={StaticResource tipUchList}}"
+                      SelectionChanged="tipCB_SelectionChanged"
+                    DisplayMemberPath="Name" SelectedValuePath="Id"/>
+            <Button x:Name="ClearTipFilter" Width="24" Height="24" Click="ClearTipFilter_Click">X</Button>
+
+        </DockPanel>
+        <DataGrid x:Name="datagrid" Grid.Row="1" 
+                  SelectedCellsChanged="datagrid_SelectedCellsChanged"
+                  AutoGenerateColumns="False"  CanUserAddRows="False">
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Код группы" Binding="{Binding Path=id_group}" Width="*"/>
+                <DataGridTextColumn Header="Название группы" Binding="{Binding Path=name_group}" Width="*"/>
+                <class:DataGridNumericColumn Header="Кол-во недель в семестре 1" Binding="{Binding Path=semestr1}" Width="*"/>
+                <class:DataGridNumericColumn Header="Кол-во недель в семестре 2" Binding="{Binding Path=semestr2}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DockPanel Grid.Row="2" Background="LightBlue" LastChildFill="False">
+            <Button x:Name="closeBtn" Width="120" DockPanel.Dock="Right" Click="closeBtn_Click">Выход</Button>
+            <Button x:Name="saveBtn" Width="120" DockPanel.Dock="Right" Click="saveBtn_Click">Сохранить</Button>
+        </DockPanel>
+    </Grid>
+</Window>

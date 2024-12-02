@@ -160,12 +160,17 @@ namespace SpoServiceSystem
                     bgWorker.DoWork+=BgWorker_DoWork;
                     bgWorker.RunWorkerCompleted+=BgWorker_RunWorkerCompleted;
                     bgWorker.RunWorkerAsync();
+                  /*
                     SpoServiceSystem.Controls.AllGroupsUserControl aguc = new Controls.AllGroupsUserControl();
                     aguc.Loaded+=Aguc_Loaded;
                     aguc.Name="allGroupsViewControl";
                     aguc.SetValue(Grid.RowProperty, 1);
                     mainWindowGrid.Children.Add(aguc);
                     mainWindowGrid.RegisterName("allGroupsViewControl", aguc);
+                  */
+
+                    GroupsPrepsUPlanEditorWindow gpupeditor = new GroupsPrepsUPlanEditorWindow();
+                    gpupeditor.Show();
 
                     break;
                 case "ALLPREPODS":
@@ -180,12 +185,26 @@ namespace SpoServiceSystem
                     mainWindowGrid.Children.Add(upControl);
                     mainWindowGrid.RegisterName(upControl.Name, upControl);
                     break;
+                case "RASP":
+                    MessageWindow mw = new MessageWindow("Выполняется загрузка данных! Ждите...");
+                    mw.Show();
+                      SpoServiceSystem.Windows.DataFromRaspWindow winSHUP = new SpoServiceSystem.Windows.DataFromRaspWindow();
+                      winSHUP.Show();
+                 //   MessageBox.Show("Операция временно заблокирована!");
+                    break;
+
                 case "BACKUPBD":
                     // MessageBox.Show("Раздел в стадии разработки !!!");
                     BackupBasaToFile();
                     break;
                 case "RESTOREBD":
                     MessageBox.Show("Раздел в стадии разработки !!!");
+                    break;
+                case "WEEKCOUNT":
+
+                    SpoServiceSystem.Windows.WeeksGroupsWindow winWeek = new SpoServiceSystem.Windows.WeeksGroupsWindow();
+                    winWeek.Show();
+                    
                     break;
                 case "EXIT":
                     this.Close();

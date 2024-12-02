@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SpoServiceSystem"
         xmlns:model ="clr-namespace:SpoServiceSystem.DataModels"
         mc:Ignorable="d" x:Name="mainWindow"
-        Icon="pack://application:,,,/ImageLib;component/Resources/images12.jpg"
+        Icon="img/kait20.png"
         Title="Главное окно программы" Height="700" Width="900">
     <Window.Resources>
         <model:Kurses x:Key="kurses" />
@@ -96,8 +96,9 @@
                             <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
                         </MenuItem.CommandBindings>
                     </MenuItem>
-                    <Separator/>
-                    <MenuItem Header="Шаблон учебного плана" Command="Zoom"  CommandParameter="SHUP">
+                
+                <Separator/>
+                <MenuItem Header="Шаблон учебного плана" Command="Zoom"  CommandParameter="SHUP">
                         <MenuItem.Icon>
                             <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
                         </MenuItem.Icon>
@@ -127,18 +128,34 @@
             </MenuItem>
 
 
-          
-                <MenuItem Header="Учебные группы" Command="Zoom"  CommandParameter="UGR">
+
+            <MenuItem Header="Учебные группы" >
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                </MenuItem.Icon>
+                <MenuItem Header="Редактор учебных групп " Command="Zoom"  CommandParameter="UGR">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
                     </MenuItem.Icon>
-         
-                        <MenuItem.CommandBindings>
-                            <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
-                        </MenuItem.CommandBindings>
-                    </MenuItem>
 
-                <MenuItem Header="Преподаватели" Command="Zoom"  CommandParameter="ALLPREPODS">
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                    </MenuItem.CommandBindings>
+                </MenuItem>
+
+                <MenuItem Header="Данные для расписания" Command="Zoom"  CommandParameter="RASP">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
+                    </MenuItem.Icon>
+
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                    </MenuItem.CommandBindings>
+                </MenuItem>
+
+            </MenuItem>
+
+            <MenuItem Header="Преподаватели" Command="Zoom"  CommandParameter="ALLPREPODS">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-x-troff-man.png" Height="36" />
                     </MenuItem.Icon>
@@ -152,13 +169,13 @@
                 </MenuItem.Icon>
                 <Separator/>
                
-                <MenuItem Header="Список учебных планов" Name="ListUP_MenuItem">
+                <MenuItem Header="Список учебных планов по курсам" Name="ListUP_MenuItem">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
                     </MenuItem.Icon>
 
                 </MenuItem>
-                <MenuItem Header="Список учебных планов 2" Name="ListUP_MenuItem2">
+                <MenuItem Header="Список учебных планов по специальностям" Name="ListUP_MenuItem2">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="36" />
                     </MenuItem.Icon>
@@ -189,6 +206,16 @@
                 <MenuItem Header="Восстановление базы данных" Command="Zoom"  CommandParameter="RESTOREBD">
                     <MenuItem.Icon>
                         <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.database.png" Height="32" />
+                    </MenuItem.Icon>
+                    <MenuItem.CommandBindings>
+                        <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />
+                    </MenuItem.CommandBindings>
+                </MenuItem>
+                <Separator/>
+                <Separator/>
+                <MenuItem Header="Количество недель обучения" Command="Zoom"  CommandParameter="WEEKCOUNT">
+                    <MenuItem.Icon>
+                        <Image Source="pack://application:,,,/ImageLib;component/Resources/application-vnd.oasis.opendocument.spreadsheet.png" Height="32" />
                     </MenuItem.Icon>
                     <MenuItem.CommandBindings>
                         <CommandBinding Command="Zoom"    Executed = "CommandBinding_Executed" />

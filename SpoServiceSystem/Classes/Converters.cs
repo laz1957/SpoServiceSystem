@@ -60,5 +60,27 @@ namespace SpoServiceSystem.Classes
             return value;
         }
     }
+
+    public class FloatConverter :IValueConverter
+    { 
+       public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            float d;
+            if (value.GetType().ToString()=="System.DBNull")
+                d=0;
+            else
+                d = float.Parse(value.ToString());
+            //  if (double.IsNaN(d))
+            //    return string.Empty;
+            if (d==0) return string.Empty;
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }  
 

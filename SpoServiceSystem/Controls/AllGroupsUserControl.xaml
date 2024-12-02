@@ -204,6 +204,9 @@
                 <Button x:Name="OpenPlanBtn" Click="OpenPlanBtn_Click" 
                         DataContext="{Binding ElementName=groupLB,Path=SelectedItem}"
                         >Открыть учебный план</Button>
+                <Button x:Name="OpenNagruzkaBtn" Click="OpenNagruzkaBtn_Click" Margin="0,10,0,0"
+                    DataContext="{Binding ElementName=groupLB,Path=SelectedItem}"
+                    >Открыть нагрузку преподавателей</Button>  
             </StackPanel>
         </Border>
     </local:CustomGrid>
