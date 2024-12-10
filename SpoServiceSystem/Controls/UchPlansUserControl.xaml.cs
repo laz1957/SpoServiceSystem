@@ -37,6 +37,7 @@ namespace SpoServiceSystem.Controls
             InitializeComponent();
 
             datagrid.LoadingRow+=Datagrid_LoadingRow;
+            this.Loaded+= datagrid_Loaded;
 
         }
 
@@ -326,6 +327,29 @@ namespace SpoServiceSystem.Controls
                 uchebPlan.AppendNewUchPlan();
                 statusTB.Text= uchebPlan.StringStatus;
             }
+        }
+
+        private void datagrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            var dpd = DependencyPropertyDescriptor.FromProperty(ItemsControl.ItemsSourceProperty, typeof(DataGrid));
+            if (dpd != null)
+            {
+                dpd.AddValueChanged(datagrid, ThisIsCalledWhenPropertyIsChanged);
+            }
+
+
+
+          
+        }
+
+        private void scrollViewer_Loaded(object sender, RoutedEventArgs e)
+        {
+           
+       }
+        private void ThisIsCalledWhenPropertyIsChanged(object sender, EventArgs e)
+        {
+            
+
         }
     }
 }

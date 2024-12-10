@@ -94,7 +94,7 @@
         <Grid Grid.Column="1" Grid.Row="1"  Background="Silver">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition x:Name="gridcolumn" Height="*"/>
                 <RowDefinition Height="32"/>
             </Grid.RowDefinitions>
 
@@ -112,25 +112,28 @@
             </StackPanel>
 
 
-            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" >
+            <ScrollViewer x:Name="scrollViewer" Grid.Row="1" Height="auto"
+                           Loaded="scrollViewer_Loaded" >
                 <ScrollViewer.Style>
                     <Style TargetType="ScrollViewer">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=datagrid, Path=HasItems}" Value="True">
                                 <Setter Property="HorizontalScrollBarVisibility" Value="Visible"/>
+                                <Setter Property="VerticalScrollBarVisibility" Value="Visible"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </ScrollViewer.Style>
-                <StackPanel>
+                <StackPanel Width="auto">
 
-                    <DataGrid x:Name="datagrid" Width="auto" 
-              
-                AutoGenerateColumns="False"
+                    <DataGrid x:Name="datagrid" Height="Auto" Width="auto"
+
+                        AutoGenerateColumns="False"
                     CanUserAddRows="False"
                 CellEditEnding="datagrid_CellEditEnding"  
                 SelectedCellsChanged="dataGrid_SelectedCellsChanged"
                  CurrentCellChanged="datagrid_CurrentCellChanged" 
+                              Loaded="datagrid_Loaded"
                   
        
     >

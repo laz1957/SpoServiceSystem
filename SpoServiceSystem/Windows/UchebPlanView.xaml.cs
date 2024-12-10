@@ -117,5 +117,12 @@ namespace SpoServiceSystem.Windows
         {
             RaschetItogov(itogi);
         }
+
+        private void scrollViewDataGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            double winH = this.ActualHeight;
+            double DGV = datagrid.ActualWidth;
+            double scroll = scrollViewDataGrid.ActualHeight;
+        }
     }
 }

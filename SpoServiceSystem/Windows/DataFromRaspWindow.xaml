@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:SpoServiceSystem.Windows"
         xmlns:model ="clr-namespace:SpoServiceSystem.DataModels"
         xmlns:class="clr-namespace:SpoServiceSystem.Classes"
-        mc:Ignorable="d"
-        Title="DataFromRaspWindow" Height="600" Width="900">
+        mc:Ignorable="d" x:Name="RaspHelpWindow"
+        Title="Вспомогательное окно для расписания" Height="600" Width="900">
     <Window.Resources>
         <class:IntegerConverter x:Key="integerConverter"/>
         <class:FloatConverter x:Key="floatConverter"/>
@@ -152,9 +152,22 @@
 
 
             </ToggleButton>
-            <TextBlock x:Name="groupnameTB" Text="Группа не выбрана" VerticalAlignment="Center" Margin="0,0,20,0"
+           
+            <TextBlock x:Name="groupnameTB" Text="Группа не выбрана" VerticalAlignment="Center" Margin="20,0,20,0"
                        FontSize="14" FontWeight="Bold" Foreground="Wheat" DockPanel.Dock="Right"/>
-
+            <TextBlock x:Name="messagesTB" FontSize="14" FontWeight="Bold" Foreground="Wheat" 
+                       DockPanel.Dock="Right" VerticalAlignment="Center"
+                       Text="[...]"></TextBlock>
+            <TextBox DockPanel.Dock="Right" Height="24" Margin="10,5,60,5" VerticalAlignment="Center"
+                      Text="{Binding ElementName=RaspHelpWindow, Path=MaxHoursWeek}"/>
+            <TextBlock  FontSize="14" FontWeight="Bold" Foreground="Wheat" 
+                        DockPanel.Dock="Right" VerticalAlignment="Center"
+                        Text="Часы в неделю:"></TextBlock>
+        </DockPanel>
+        <DockPanel Grid.Row="2" Background="{Binding Source={StaticResource  SilverLinearGradientBrush}}" LastChildFill="False">
+            <Button x:Name="saveBtn" DockPanel.Dock="Right" Margin="3,5,10,3" Click="saveBtn_Click" Width="140">Сохранить изменения</Button>
+            <Button x:Name="calckBtn" DockPanel.Dock="Right" Margin="3,5,10,3" Click="calckBtn_Click" Width="140">Пересчитать таблицу</Button>
+            <Button x:Name="initDatakBtn" DockPanel.Dock="Right" Margin="3,5,10,3" Click="initDatakBtn_Click" Width="140">Сформировать недельные часы</Button>
         </DockPanel>
         <Grid x:Name="BG" Grid.Row="1" 
               PreviewMouseLeftButtonDown="BG_PreviewMouseLeftButtonDown">
@@ -164,16 +177,38 @@
                 <SolidColorBrush Color="LightGray"/>
 
             </Grid.Background>
-            <DataGrid x:Name="datagrid" AutoGenerateColumns="false" CanUserAddRows="False">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            <DataGrid x:Name="datagrid" AutoGenerateColumns="false" CanUserAddRows="False"
+                      CellEditEnding="datagrid_CellEditEnding"
+                        SelectionChanged="datagrid_SelectionChanged" SourceUpdated="datagrid_SourceUpdated">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Background" Value="{Binding Path=Row.RowState, Converter={StaticResource colorconverter}}"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=YesSumma}" Value="False">
+                                <Setter Property="Background" Value="Silver"/>
+                                <Setter Property="Foreground" Value="DarkMagenta"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="№" Binding="{ Binding Path=Number}" Width="40">
+                    
+                    <DataGridTextColumn Header="№" Binding="{ Binding Path=Number}" Width="40" x:Name="Col1" IsReadOnly="True">
                         
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Индекс" Binding="{Binding Path=index_pr}" Width="80"
+                    <DataGridCheckBoxColumn Header="+/-"  Binding="{Binding Path=YesSumma}" 
+                                            
+                                            Width="40" x:Name="Col11"/>
+                    <DataGridTextColumn Header="Индекс" Binding="{Binding Path=index_pr}" Width="80" x:Name="Col2" IsReadOnly="True"
                                         CellStyle="{StaticResource CenterCellStyle}">
                       
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="Название предмета" Width="3*" Binding="{Binding Path=name_pr}">
+                    
+                    <DataGridTextColumn Header="Название предмета" Width="3*" Binding="{Binding Path=name_pr}" x:Name="Col3" IsReadOnly="True">
                         <DataGridTextColumn.HeaderStyle>
                             <Style TargetType="DataGridColumnHeader">
                                 <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -187,7 +222,7 @@
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
 
-                    <class:DataGridNumericColumn x:Name="Itogo1"  Width="*"
+                    <class:DataGridNumericColumn x:Name="Itogo1"  Width="*" IsReadOnly="True"
                                                  CellStyle="{StaticResource CenterCellStyle}"
                                                  Binding="{Binding Path=Item2,Converter={StaticResource integerConverter}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
@@ -203,7 +238,7 @@
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
                     </class:DataGridNumericColumn>
-                    <class:DataGridNumericColumn x:Name="Itogo2"  Width="*" 
+                    <class:DataGridNumericColumn x:Name="Itogo2"  Width="*"  IsReadOnly="True"
                                                  CellStyle="{StaticResource CenterCellStyle}"
                                                  Binding="{Binding Path=Item4,Converter={StaticResource integerConverter}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
@@ -219,7 +254,7 @@
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
                     </class:DataGridNumericColumn>
-                    <class:DataGridNumericColumn x:Name="Semestr1"  Width="*" 
+                    <class:DataGridNumericColumn x:Name="Semestr1"  Width="*"  
                                                  CellStyle="{StaticResource CenterCellStyle}"
                                                  Binding="{Binding Path=semestr1,Converter={StaticResource integerConverter}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
@@ -228,14 +263,21 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition/>
                                         <RowDefinition/>
+                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Text="Недели " HorizontalAlignment="Center"/>
                                     <TextBlock Grid.Row="1" Text="1-й семестр" HorizontalAlignment="Center"/>
+                                    <TextBox x:Name="semestrTB1" Grid.Row="2" HorizontalAlignment="Center" Width="50"
+                                             Text="{Binding RelativeSource={RelativeSource FindAncestor,
+                                               AncestorType={x:Type local:DataFromRaspWindow} },
+                                               Path=Weeks1,Mode=TwoWay,
+                                               UpdateSourceTrigger=LostFocus}">
+                                    </TextBox>
                                 </Grid>
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
                     </class:DataGridNumericColumn>
-                    <class:DataGridNumericColumn x:Name="Semestr2"  Width="*"
+                    <class:DataGridNumericColumn x:Name="Semestr2"  Width="*" 
                                                  CellStyle="{StaticResource CenterCellStyle}"
                                                  Binding="{Binding Path=semestr2,Converter={StaticResource integerConverter}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
@@ -244,15 +286,17 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition/>
                                         <RowDefinition/>
+                                        <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <TextBlock Text="Недели" HorizontalAlignment="Center"/>
                                     <TextBlock Grid.Row="1" Text="2-й семестр" HorizontalAlignment="Center"/>
+                                    <TextBox x:Name="semestrTB2" Grid.Row="2" HorizontalAlignment="Center" Width="50"
+                                             Text="{Binding ElementName=RaspHelpWindow, Path=Weeks2}"></TextBox>
                                 </Grid>
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
                     </class:DataGridNumericColumn>
-                    <class:DataGridNumericColumn x:Name="week1"  Width="*" 
-                                                 CellStyle="{StaticResource CenterCellStyle}"
+                    <class:DataGridNumericColumn x:Name="week1"  Width="*" IsReadOnly="True"
                                                  Binding="{Binding Path=weeksem1,Converter={StaticResource floatConverter},StringFormat={}{0:N2}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
                             <DataTemplate>
@@ -266,9 +310,26 @@
                                 </Grid>
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
+                        <class:DataGridNumericColumn.CellStyle>
+                            <Style  TargetType="DataGridCell">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="DataGridCell">
+                                            <Grid Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="Center"
+                      VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Background" Value="Silver"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="Blue"/>
+                            </Style>
+                        </class:DataGridNumericColumn.CellStyle>
                     </class:DataGridNumericColumn>
-                    <class:DataGridNumericColumn x:Name="week2"  Width="*" 
-                                                 CellStyle="{StaticResource CenterCellStyle}"
+                    <class:DataGridNumericColumn x:Name="week2"  Width="*" IsReadOnly="True"
+                                                 
                                                  Binding="{Binding Path=weeksem2,Converter={StaticResource floatConverter},StringFormat={}{0:N2}}">
                         <class:DataGridNumericColumn.HeaderTemplate>
                             <DataTemplate>
@@ -282,8 +343,26 @@
                                 </Grid>
                             </DataTemplate>
                         </class:DataGridNumericColumn.HeaderTemplate>
+                        <class:DataGridNumericColumn.CellStyle>
+                        <Style  TargetType="DataGridCell">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DataGridCell">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"/>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                                <Setter Property="Background" Value="LightGray"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="Blue"/>
+                            </Style>
+                        </class:DataGridNumericColumn.CellStyle>
+
                     </class:DataGridNumericColumn>
-                    <DataGridTextColumn Header="ФИО преподавателя" Width="2*" 
+                    <DataGridTextColumn Header="ФИО преподавателя" Width="2*" x:Name="FioCol" IsReadOnly="True"
                                          CellStyle="{StaticResource CenterCellStyle}"
                                         Binding="{Binding Path=Fio}">
                         <DataGridTextColumn.HeaderStyle>
@@ -296,7 +375,25 @@
                 </DataGrid.Columns>
                 
             </DataGrid>
-
+            <Grid Grid.Row="1" Background="LightCyan">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding ElementName=Col1, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Col11, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Col2, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Col3, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Itogo1, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Itogo2, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Semestr1, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=Semestr2, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=week1, Path=ActualWidth}"/>
+                    <ColumnDefinition Width="{Binding ElementName=week2, Path=ActualWidth}"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="3" Text="Итого:" TextAlignment="Center" FontSize="14" FontWeight="Bold"/>
+                <TextBlock Grid.Column="8" TextAlignment="Center"  FontSize="14" FontWeight="Bold"
+                           Text="{Binding ElementName=RaspHelpWindow,Path=Summa1,StringFormat={}{0:N2}}"/>
+                <TextBlock Grid.Column="9"   TextAlignment="Center" FontSize="14" FontWeight="Bold"
+                           Text="{Binding ElementName=RaspHelpWindow,Path=Summa2,StringFormat={}{0:N2}}"/>
+            </Grid>
         </Grid>
         <Grid   x:Name="nav_pnl" Grid.Row="1" Loaded="nav_pnl_Loaded"
          HorizontalAlignment="Left"

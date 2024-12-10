@@ -61,7 +61,7 @@
 
 
         </DockPanel>
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer x:Name="scrollViewDataGrid" Grid.Row="1" VerticalScrollBarVisibility="Auto" Loaded="scrollViewDataGrid_Loaded">
             <ScrollViewer.Style>
                 <Style TargetType="ScrollViewer">
                     <Style.Triggers>

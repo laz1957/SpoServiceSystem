@@ -324,11 +324,12 @@ namespace SpoServiceSystem.DataModels
         }
         void AddColumns()
         {
+            dt.Columns.Add("YesSumma", typeof(bool));
             dt.Columns.Add("Fio", typeof(string));
             dt.Columns.Add("weeksem1", typeof(float));
             dt.Columns.Add("weeksem2", typeof(float));
             dt.Columns["weeksem1"].Expression = "IIF(semestr1>0,Item2/semestr1,0)";
-            dt.Columns["weeksem2"].Expression = "IIF(semestr2>0,Item2/semestr2,0)";
+            dt.Columns["weeksem2"].Expression = "IIF(semestr2>0,Item4/semestr2,0)";
         }
         void InitFioColumn()
         {
@@ -337,6 +338,7 @@ namespace SpoServiceSystem.DataModels
                 string fio = string.Format("{0} {1}. {2}.", dr["fam"].ToString(),
                                    dr["name"].ToString().Substring(0, 1), dr["otch"].ToString().Substring(0, 1));
                 dr["Fio"]=fio;
+                dr["YesSumma"]=true;
             }
         }
 
